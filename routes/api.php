@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserDetailController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,4 +23,5 @@ Route::prefix('/users')->group(function(){
     Route::post('/',[UserController::class, 'register']);
 });
 
-Route::get('/universities',[DropdownController::class, 'getUniversities']);
+Route::get('/universities',[UserDetailController::class, 'getUniversities']);
+Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
