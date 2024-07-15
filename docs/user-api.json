@@ -1,0 +1,128 @@
+{
+    "openapi":"3.0.3",
+    "info":{
+        "title": "User API",
+        "description": "User APi",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/users":{
+            "post": {
+                "description": "Register New User",
+                "requestBody":{
+                    "content": {
+                        "application/json":{
+                            "examples": {
+                                "Raka":{
+                                    "description": "Register New User : Raka",
+                                    "value":{
+                                        "firstName": "Raka",
+                                        "lastName": "Febrian Syahputra",
+                                        "university": "Universitas Jember",
+                                        "study_program": "Sistem Informasi",
+                                        "starting_year": "2022",
+                                        "email": "contact.rakafebrian@gmail.com",
+                                        "password": "raka123"
+                                    }
+                                }
+                            },
+                            "schema":{
+                                "type": "object",
+                                "required": [
+                                    "firstName","lastName","university","study_program","starting_year","email","password"
+                                ],
+                                "properties": {
+                                    "firstName":{
+                                        "type": "string"
+                                    },
+                                    "lastName":{
+                                        "type": "string"
+                                    },
+                                    "university":{
+                                        "type": "integer"
+                                    },
+                                    "study_program":{
+                                        "type": "integer"
+                                    },
+                                    "starting_year":{
+                                        "type": "string"
+                                    },
+                                    "email":{
+                                        "type": "string"
+                                    },
+                                    "password":{
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "validationError": {
+                                        "description": "Validation error",
+                                        "value": {
+                                            "errors": {
+                                                "firstName": [
+                                                    "Nama Depan tidak boleh kosong",
+                                                    "Nama Depan harus berjumlah maksimal 60 karakter"
+                                                ],
+                                                "password": [
+                                                    "Kata Sandi harus terdiri dari alfabet, angka, dan simbol",
+                                                    "Kata Sandi harus berjumlah minimal 8 karakter"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201":{
+                        "description": "Success Register USer",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Success Register User : Raka",
+                                        "value": {
+                                            "data": {
+                                                "responses": "Akun berhasil terdaftar"
+                                            }
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "response": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

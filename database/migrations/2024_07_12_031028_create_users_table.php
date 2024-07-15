@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('ktp_image',50)->nullable(false);
             $table->integer('starting_year')->nullable(false);
             $table->string('account_number',50)->unique()->nullable();
+            $table->integer('free_downlaod')->nullable(false)->default(2);
             $table->unsignedBigInteger('university_id')->nullable(false);
             $table->unsignedBigInteger('study_program_id')->nullable(false);
 
