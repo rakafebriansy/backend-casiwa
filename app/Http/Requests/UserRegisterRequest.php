@@ -28,7 +28,7 @@ class UserRegisterRequest extends FormRequest
             'last_name' => 'max:60|nullable',
             'email' => 'required|email',
             'password' => 'required|min:8',
-            'starting_year' => 'required|digits:4',
+            'starting_year' => 'required|string|size:4',
             'university_id' => 'required|numeric',
             'study_program_id' => 'required|numeric',
         ];
@@ -49,6 +49,7 @@ class UserRegisterRequest extends FormRequest
             'starting_year.email' => 'Tahun Masuk Perkuliahan harus berupa angka',
             'university_id.numeric' => 'Universitas belum dipilih',
             'study_program_id.numeric' => 'Program Studi belum dipilih',
+            'starting_year.size' => 'Tahun Masuk Perkuliahan harus berjumlah 4 digit',
         ];
     }
     protected function failedValidation(Validator $validator)

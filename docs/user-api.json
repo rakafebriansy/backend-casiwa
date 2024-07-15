@@ -21,8 +21,8 @@
                                 "Raka":{
                                     "description": "Register New User : Raka",
                                     "value":{
-                                        "firstName": "Raka",
-                                        "lastName": "Febrian Syahputra",
+                                        "first_name": "Raka",
+                                        "last_name": "Febrian Syahputra",
                                         "university": "Universitas Jember",
                                         "study_program": "Sistem Informasi",
                                         "starting_year": "2022",
