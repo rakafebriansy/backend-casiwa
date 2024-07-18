@@ -11,7 +11,7 @@
         }
     ],
     "paths": {
-        "/api/users":{
+        "/api/register":{
             "post": {
                 "description": "Register New User",
                 "requestBody":{
@@ -97,7 +97,9 @@
                                         "description": "Success Register User : Raka",
                                         "value": {
                                             "data": {
-                                                "responses": "Akun berhasil terdaftar"
+                                                "responses": {
+                                                    "message": "Akun berhasil terdaftar"
+                                                }
                                             }
                                         }
                                     }
@@ -108,7 +110,111 @@
                                         "data": {
                                             "type": "object",
                                             "properties": {
-                                                "response": {
+                                                "success": {
+                                                    "type": "boolean"
+                                                },
+                                                "message": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login":{
+            "post": {
+                "description": "Login User",
+                "requestBody":{
+                    "content": {
+                        "application/json":{
+                            "examples": {
+                                "Raka":{
+                                    "description": "Login User : Raka",
+                                    "value":{
+                                        "email": "contact.rakafebrian@gmail.com",
+                                        "password": "raka123"
+                                    }
+                                }
+                            },
+                            "schema":{
+                                "type": "object",
+                                "required": [
+                                    "email","password"
+                                ],
+                                "properties": {
+                                    "email":{
+                                        "type": "string"
+                                    },
+                                    "password":{
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "validationError": {
+                                        "description": "Validation error",
+                                        "value": {
+                                            "errors": {
+                                                "email": [
+                                                    "Email tidak boleh kosong",
+                                                    "Email tidak valid"
+                                                ],
+                                                "password": [
+                                                    "Kata Sandi harus terdiri dari alfabet, angka, dan simbol"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201":{
+                        "description": "Success Login USer",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Success Login User : Raka",
+                                        "value": {
+                                            "data": {
+                                                "responses": "Anda berhasil masuk"
+                                            }
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean"
+                                                },
+                                                "message": {
+                                                    "type": "string"
+                                                },
+                                                "token": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
                                                     "type": "string"
                                                 }
                                             }

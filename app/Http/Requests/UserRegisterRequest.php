@@ -28,6 +28,7 @@ class UserRegisterRequest extends FormRequest
             'last_name' => 'max:60|nullable',
             'email' => 'required|email',
             'password' => 'required|min:8',
+            'confirm_password' => 'same:password',
             'starting_year' => 'required|string|size:4',
             'university_id' => 'required|numeric',
             'study_program_id' => 'required|numeric',
@@ -45,11 +46,12 @@ class UserRegisterRequest extends FormRequest
             'first_name.max' => 'Nama Depan harus berjumlah maksimal 60 karakter',
             'last_name.max' => 'Nama Belakang harus berjumlah maksimal 60 karakter',
             'email.email' => 'Alamat Email tidak valid',
-            'password.email' => 'Kata Sandi harus berjumlah minimal 8 karakter',
-            'starting_year.email' => 'Tahun Masuk Perkuliahan harus berupa angka',
+            'password.min' => 'Kata Sandi harus berjumlah minimal 8 karakter',
+            'starting_year.string' => 'Tahun Masuk Perkuliahan harus berupa angka',
             'university_id.numeric' => 'Universitas belum dipilih',
             'study_program_id.numeric' => 'Program Studi belum dipilih',
             'starting_year.size' => 'Tahun Masuk Perkuliahan harus berjumlah 4 digit',
+            'confirm_password.same' => 'Konfirmasi Kata Sandi tidak sesuai',
         ];
     }
     protected function failedValidation(Validator $validator)
