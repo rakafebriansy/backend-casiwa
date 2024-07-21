@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('title',60)->nullable(false);
             $table->text('description')->nullable(false);
+            $table->string('file_name',255)->nullable(false);
+            $table->string('thumbnail',255)->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
-            $table->unsignedBigInteger('category_id')->nullable(false);
             
             $table->foreign('user_id')->on('users')->references('id');
-            $table->foreign('category_id')->on('categories')->references('id');
             $table->timestamps();
         });
     }
