@@ -22,7 +22,7 @@ class StudyFieldSeeder extends Seeder
             'name' => 'Psikologi'
         ]);
         StudyField::insert([
-            'id' => 2,
+            'id' => 3,
             'name' => 'Ilmu Keperawatan'
         ]);
     }

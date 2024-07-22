@@ -14,7 +14,7 @@ class StudyProgramSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(StudyField::class);
+        $this->call(StudyFieldSeeder::class);
 
         StudyProgram::insert([
             'id' => 1,
