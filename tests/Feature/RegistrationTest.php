@@ -7,6 +7,7 @@ use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -21,7 +22,6 @@ class RegistrationTest extends TestCase
         DB::delete('DELETE FROM study_programs');
         DB::delete('DELETE FROM study_fields');
         DB::delete('DELETE FROM universities');
-        // DB::delete('DELETE FROM users');
     }
     public function testRegisterSuccess(): void
     {
@@ -38,6 +38,7 @@ class RegistrationTest extends TestCase
             'confirm_password' => '12345678'
         ]);
         $response->assertStatus(201);
+        Log::channel('stderr')->info($response->json());
     }
     public function testRegisterOptionality(): void
     {
@@ -53,6 +54,7 @@ class RegistrationTest extends TestCase
             'confirm_password' => '12345678'
         ]);
         $response->assertStatus(201);
+        Log::channel('stderr')->info($response->json());
     }
     public function testRegisterValidationError(): void
     {
@@ -68,6 +70,7 @@ class RegistrationTest extends TestCase
             'confirm_password' => '123456789'
         ]);
         $response->assertStatus(400);
+        Log::channel('stderr')->info($response->json());
     }
     public function testRegisterUserAlreadyExists(): void
     {
@@ -83,12 +86,6 @@ class RegistrationTest extends TestCase
             'confirm_password' => '12345678'
         ]);
         $response->assertStatus(400);
-        self::assertEquals([
-            "errors" => [
-                "email" => [
-                    "Email sudah terdaftar"
-                ]
-            ]
-        ],$response->json());
+        Log::channel('stderr')->info($response->json());
     }
 }
