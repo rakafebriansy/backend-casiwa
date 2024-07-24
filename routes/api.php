@@ -38,5 +38,5 @@ Route::get('/universities',[UserDetailController::class, 'getUniversities']);
 Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
 
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);
-
+Route::get('/total-notes',[NotesController::class, 'getNotePreviews']);
 Route::get('/preview/{path}',[NotesController::class, 'loadImagePreview']);

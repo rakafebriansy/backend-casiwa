@@ -81,7 +81,14 @@ class NotesController extends Controller
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->get();
-            return (NotePreviewResource::collection($notes))->response()->setStatusCode(200);
+
+            $notes_wrapped = NotePreviewResource::collection($notes);
+            $total_notes = $notes_wrapped->count();
+
+            return response()->json([
+                'data' => $notes_wrapped,
+                'total' => $total_notes
+            ])->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [
