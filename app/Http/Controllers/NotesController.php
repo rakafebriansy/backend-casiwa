@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UploadNoteRequest;
 use App\Http\Resources\GeneralRescource;
+use App\Http\Resources\NoteResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Note;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\PdfToImage\Pdf;
 
 class NotesController extends Controller
 {
-    public function upload(UploadNoteRequest $request)
+    public function upload(UploadNoteRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -49,5 +51,25 @@ class NotesController extends Controller
                 ]
             ]
         ],500)); 
+    }
+
+    public function getSingleNote(Request $request): JsonResponse
+    {
+        try {
+            $notes = Note::select('notes.title','notes.description','notes.file_path','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->join('users','users.id','notes.user_di')
+            ->join('study_programs','study_programs.id','users.study_program_id')
+            ->join('universities','universities.id','study_programs.university_id')
+            ->where('notes.id',$request->get('id'))->first();
+            return (NoteResource::collection($notes))->response()->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
     }
 }

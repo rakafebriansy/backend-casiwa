@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
         ]);
     });
     Route::post('/upload',[NotesController::class,'upload']);
+    Route::get('/note-detail',[NotesController::class,'getSingleNote']);
 });
 Route::post('/register',[UserController::class, 'register']);
 Route::post('/login',[UserController::class, 'login']);

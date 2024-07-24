@@ -24,5 +24,14 @@ class UserSeeder extends Seeder
             'university_id' => 1,
             'study_program_id' => 1
         ]);
+        User::insert([
+            'first_name' => 'Raka',
+            'last_name' => 'Febrian Syahputra',
+            'email' => 'kerenr445@gmail.com',
+            'password' => Hash::make('12345678'),
+            'starting_year' => 2022,
+            'university_id' => 2,
+            'study_program_id' => 2
+        ]);
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name',100)->unique()->nullable(false);
             $table->unsignedBigInteger('study_field_id')->nullable(false);
 
-            $table->foreign('study_field_id')->on('study_fields')->references('id');
+            $table->foreign('study_field_id')->on('study_fields')->references('id')->nu;
         });
     }
 

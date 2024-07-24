@@ -17,7 +17,9 @@ return new class extends Migration
             $table->text('description')->nullable(false);
             $table->string('file_path',255)->nullable(false);
             $table->string('thumbnail_path',255)->nullable(false);
+            $table->unsignedInteger('download_count')->nullable(false)->default(0);
             $table->unsignedBigInteger('user_id')->nullable(false);
+            $table->softDeletes();
             
             $table->foreign('user_id')->on('users')->references('id');
             $table->timestamps();
