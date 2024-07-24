@@ -77,10 +77,12 @@ class NotesController extends Controller
     public function getNotePreviews(Request $request): JsonResponse
     {
         try {
-            $notes = Note::select('notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
-            ->join('universities','universities.id','users.university_id')->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->get();
+            ->join('universities','universities.id','users.university_id')
+            ->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")
+            ->orderBy('title')->get();
 
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();

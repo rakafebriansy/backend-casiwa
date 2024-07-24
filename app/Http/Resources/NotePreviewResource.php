@@ -15,6 +15,7 @@ class NotePreviewResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'thumbnail_name' => $this->thumbnail_name,
             'name' => $this->first_name . ' ' . $this->last_name,
