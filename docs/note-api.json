@@ -1,0 +1,122 @@
+{
+    "openapi":"3.0.3",
+    "info":{
+        "title": "Note API",
+        "description": "Note APi",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/user/upload":{
+            "post": {
+                "description": "Upload New Document",
+                "requestBody":{
+                    "content": {
+                        "multipart/form-data":{
+                            "examples": {
+                                "Document1":{
+                                    "description": "Upload New Document : Document 1",
+                                    "value":{
+                                        "title": "Document 1",
+                                        "description": "This is a description",
+                                        "file": "sample-document.pdf",
+                                        "thumbnail": "sample-document.png"
+                                    }
+                                }
+                            },
+                            "schema":{
+                                "type": "object",
+                                "required": [
+                                    "title","description","file","thumbnail"
+                                ],
+                                "properties": {
+                                    "title":{
+                                        "type": "string"
+                                    },
+                                    "description":{
+                                        "type": "string"
+                                    },
+                                    "file":{
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Extension: .pdf"
+                                    },
+                                    "thumbnail":{
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Extension: .png, .jpg"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "validationError": {
+                                        "description": "Validation error",
+                                        "value": {
+                                            "errors": {
+                                                "title": [
+                                                    "Judul tidak boleh kosong",
+                                                    "Judul harus berjumlah maksimal 60 karakter"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201":{
+                        "description": "Upload File Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Upload File Success : Document 1",
+                                        "value": {
+                                            "data": {
+                                                "responses": {
+                                                    "success": "true",
+                                                    "message": "Dokumen berhasil diunggah"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean"
+                                                },
+                                                "message": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

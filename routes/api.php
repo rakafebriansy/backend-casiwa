@@ -33,4 +33,5 @@ Route::post('/login',[UserController::class, 'login']);
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);
 Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
+
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);

@@ -89,15 +89,16 @@
                         }
                     },
                     "201":{
-                        "description": "Success Register USer",
+                        "description": "Register Success",
                         "content": {
                             "application/json": {
                                 "examples": {
                                     "success": {
-                                        "description": "Success Register User : Raka",
+                                        "description": "Register Success : Raka",
                                         "value": {
                                             "data": {
                                                 "responses": {
+                                                    "success": "true",
                                                     "message": "Akun berhasil terdaftar"
                                                 }
                                             }
@@ -186,7 +187,7 @@
                         }
                     },
                     "201":{
-                        "description": "Success Login USer",
+                        "description": "Login Success",
                         "content": {
                             "application/json": {
                                 "examples": {
@@ -194,6 +195,7 @@
                                         "description": "Success Login User : Raka",
                                         "value": {
                                             "data": {
+                                                "success": "true",
                                                 "responses": "Anda berhasil masuk"
                                             }
                                         }
