@@ -11,6 +11,54 @@
         }
     ],
     "paths": {
+        "/api/notes":{
+            "get": {
+                "description": "Get list of notes",
+                "responses": {
+                    "200": {
+                        "description": "List of notes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "thumbnail_path": {
+                                                        "type": "string"
+                                                    },
+                                                    "study_program": {
+                                                        "type": "string"
+                                                    },
+                                                    "university": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/note-detail":{
             "get": {
                 "description": "Get a single note",
