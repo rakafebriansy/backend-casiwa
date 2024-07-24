@@ -20,4 +20,5 @@ Route::get('/', function () {
 
 Route::prefix('/test')->group(function() {
     Route::get('/pdf-viewer',[TestController::class,'pdfView']);
+    Route::get('/pdf-to-image',[TestController::class,'upload']);
 });

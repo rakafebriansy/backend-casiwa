@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DropdownController;
+use App\Http\Controllers\NotesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserDetailController;
 use App\Http\Resources\LoginResource;
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
             'success' => true
         ]);
     });
+    Route::post('/upload',[NotesController::class,'upload']);
 });
 Route::post('/register',[UserController::class, 'register']);
 Route::post('/login',[UserController::class, 'login']);

@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\UploadNoteRequest;
+use App\Http\Resources\GeneralRescource;
+use App\Http\Utilities\CustomResponse;
+use App\Models\Note;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Spatie\PdfToImage\Pdf;
+
+class NotesController extends Controller
+{
+    public function upload(UploadNoteRequest $request)
+    {
+        $data = $request->validated();
+
+        $pdf_doc = $request->file('file');
+        $thumbnail = $request->file('thumbnail');
+        $name = uniqid(mt_rand(),true);
+        $file_name = $name . '.' . $pdf_doc->extension();
+        $thumbnail_name = $name . '.' . $thumbnail->extension();
+
+        $file_path = $pdf_doc->storeAs('pdfs',$file_name);
+        $thumbnail_path = $thumbnail->storeAs('thumbnails',$thumbnail_name);
+
+
+        $note = new Note($data);
+        $note->title = $data['title'];
+        $note->description = $data['description'];
+        $note->file_path = $file_path;
+        $note->thumbnail_path = $thumbnail_path;
+        $note->user_id = Auth::user()->id;
+        $result = $note->save();
+
+        if($result) {
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Dokumen berhasil diunggah' : 'Dokumen Gagal Diunggah';
+
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        }
+        throw new HttpResponseException(response([
+            'errors' => [
+                'error' => [
+                    'Internal Server Error'
+                ]
+            ]
+        ],500)); 
+    }
+}

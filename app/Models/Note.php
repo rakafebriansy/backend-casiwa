@@ -17,7 +17,8 @@ class Note extends Model
     protected $fillable = [
         'title',
         'description',
-        'user_id',
+        'file_path',
+        'thumbnail_path',
     ];
     public function user(): BelongsTo
     {
