@@ -27,6 +27,9 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     });
     Route::post('/upload',[NotesController::class,'upload']);
     Route::get('/note-detail',[NotesController::class,'getSingleNote']);
+    Route::get('/test', function() {
+        return Auth::user()->id;
+    });
 });
 Route::post('/register',[UserController::class, 'register']);
 Route::post('/login',[UserController::class, 'login']);
@@ -35,3 +38,5 @@ Route::get('/universities',[UserDetailController::class, 'getUniversities']);
 Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
 
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);
+
+Route::get('/preview/{path}',[NotesController::class, 'loadImagePreview']);

@@ -16,11 +16,12 @@ class NotePreviewResource extends JsonResource
     {
         return [
             'title' => $this->title,
-            'thumbnail_path' => $this->thumbnail_path,
+            'thumbnail_name' => $this->thumbnail_name,
             'name' => $this->first_name . ' ' . $this->last_name,
             'study_program' => $this->study_program,
             'university' => $this->university,
-            'created_at' => $this->created_at,
+            'download_count' => $this->download_count,
+            'date' => date('d-m-Y',strtotime($this->created_at)),
         ];
     }
 }

@@ -17,11 +17,11 @@ class NoteResource extends JsonResource
         return [
             'title' => $this->title,
             'description' => $this->description,
-            'file_path' => $this->file_path,
+            'file_name' => $this->file_name,
             'name' => $this->first_name . ' ' . $this->last_name,
             'study_program' => $this->study_program,
             'university' => $this->university,
-            'created_at' => $this->created_at,
+            'date' => date('d-m-Y',$this->created_at)
         ];
     }
 }

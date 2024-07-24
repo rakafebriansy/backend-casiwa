@@ -24,7 +24,7 @@ class UploadNoteRequest extends FormRequest
     {
         return [
             'title' => 'required|max:60',
-            'description' => 'required|max:100',
+            'description' => 'required|max:200',
             'file' => 'mimes:pdf|required|max:20480',
             'thumbnail' => 'required|mimes:png,jpg',
         ];
@@ -37,7 +37,7 @@ class UploadNoteRequest extends FormRequest
             'file.required' => 'Belum ada file yang diunggah',
             'thumbnail.required' => 'Belum ada thumbnail yang diunggah',
             'title.max' => 'Judul harus berjumlah maksimal 60 karakter',
-            'description.max' => 'Deskripsi harus berjumlah maksimal 100 karakter',
+            'description.max' => 'Deskripsi harus berjumlah maksimal 200 karakter',
             'file.max' => 'File harus berukuran maksimal 20 MB',
             'file.mimes' => 'File harus memiliki ekstensi pdf',
             'thumbnail.mimes' => 'Thumbnail harus memiliki ekstensi png',

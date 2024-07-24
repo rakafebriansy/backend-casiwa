@@ -12,6 +12,8 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Spatie\PdfToImage\Pdf;
 
 class NotesController extends Controller
@@ -26,15 +28,14 @@ class NotesController extends Controller
         $file_name = $name . '.' . $pdf_doc->extension();
         $thumbnail_name = $name . '.' . $thumbnail->extension();
 
-        $file_path = $pdf_doc->storeAs('pdfs',$file_name);
-        $thumbnail_path = $thumbnail->storeAs('thumbnails',$thumbnail_name);
-
+        $pdf_doc->storeAs('pdfs',$file_name);
+        $thumbnail->storeAs('thumbnails',$thumbnail_name);
 
         $note = new Note($data);
         $note->title = $data['title'];
         $note->description = $data['description'];
-        $note->file_path = $file_path;
-        $note->thumbnail_path = $thumbnail_path;
+        $note->file_name = $file_name;
+        $note->thumbnail_name = $thumbnail_name;
         $note->user_id = Auth::user()->id;
         $result = $note->save();
 
@@ -57,7 +58,7 @@ class NotesController extends Controller
     public function getSingleNote(Request $request): JsonResponse
     {
         try {
-            $notes = Note::select('notes.title','notes.description','notes.file_path','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            $notes = Note::select('notes.title','notes.description','notes.file_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
             ->join('users','users.id','notes.user_di')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','study_programs.university_id')
@@ -76,10 +77,10 @@ class NotesController extends Controller
     public function getNotePreviews(Request $request): JsonResponse
     {
         try {
-            $notes = $notes = Note::select('notes.title','notes.thumbnail_path','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
-            ->join('users','users.id','notes.user_di')
+            $notes = Note::select('notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
-            ->join('universities','universities.id','study_programs.university_id')->limit($request->get('limit'))->get();
+            ->join('universities','universities.id','users.university_id')->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->get();
             return (NotePreviewResource::collection($notes))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
@@ -89,6 +90,15 @@ class NotesController extends Controller
                     ]
                 ]
             ],500));
+        }
+    }
+    public function loadImagePreview($thumbnail_name)
+    {
+        $path = storage_path("app/thumbnails/$thumbnail_name"); ;
+        if (Storage::disk('local')->exists("thumbnails/$thumbnail_name")) {
+            return Response::file($path);
+        } else {
+            abort(404);
         }
     }
 }
