@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UploadNoteRequest;
 use App\Http\Resources\GeneralRescource;
+use App\Http\Resources\NotePreviewResource;
 use App\Http\Resources\NoteResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Note;
@@ -62,6 +63,24 @@ class NotesController extends Controller
             ->join('universities','universities.id','study_programs.university_id')
             ->where('notes.id',$request->get('id'))->first();
             return (NoteResource::collection($notes))->response()->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function getNotePreviews(Request $request): JsonResponse
+    {
+        try {
+            $notes = $notes = Note::select('notes.title','notes.thumbnail_path','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->join('users','users.id','notes.user_di')
+            ->join('study_programs','study_programs.id','users.study_program_id')
+            ->join('universities','universities.id','study_programs.university_id')->limit($request->get('limit'))->get();
+            return (NotePreviewResource::collection($notes))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [
