@@ -13,17 +13,46 @@
     "paths": {
         "/api/universities":{
             "get": {
-                "description": "Get list universities",
-                "parameters": [
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "schema": {}
-                    }
-                ],
+                "description": "Get list of universities",
                 "responses": {
                     "200": {
                         "description": "List universities",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/study-programs":{
+            "get": {
+                "description": "Get list of study programs",
+                "responses": {
+                    "200": {
+                        "description": "List study programs",
                         "content": {
                             "application/json": {
                                 "schema": {
