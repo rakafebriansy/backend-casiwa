@@ -27,6 +27,8 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     });
     Route::post('/upload',[NotesController::class,'upload']);
     Route::get('/note-detail',[NotesController::class,'getSingleNote']);
+    Route::get('/uploaded-notes',[NotesController::class,'getUploadedNotePreviews']);
+    Route::get('/downloaded-notes',[NotesController::class,'getDownloadedNotePreviews']);
     Route::get('/test', function() {
         return Auth::user()->id;
     });

@@ -108,6 +108,63 @@ class NotesController extends Controller
             ],500));
         }
     }
+    public function getUploadedNotePreviews(Request $request): JsonResponse
+    {
+        try {
+            $user_id = Auth::user()->id;
+            $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->join('users','users.id','notes.user_id')
+            ->join('study_programs','study_programs.id','users.study_program_id')
+            ->join('universities','universities.id','users.university_id')
+            ->where('users.id',$user_id)->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->orderBy('notes.title')->get();
+
+            $notes_wrapped = NotePreviewResource::collection($notes);
+            $total_notes = $notes_wrapped->count();
+
+            return response()->json([
+                'data' => $notes_wrapped,
+                'total' => $total_notes
+            ])->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+
+    public function getDownloadedNotePreviews(Request $request): JsonResponse
+    {
+        try {
+            $user_id = Auth::user()->id;
+            $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->join('users','users.id','notes.user_id')
+            ->join('study_programs','study_programs.id','users.study_program_id')
+            ->join('universities','universities.id','users.university_id')
+            ->join('download_details','users.id','download_details.user_id')
+            ->where('users.id',$user_id)->orderBy('notes.title')->get();
+
+            $notes_wrapped = NotePreviewResource::collection($notes);
+            $total_notes = $notes_wrapped->count();
+
+            return response()->json([
+                'data' => $notes_wrapped,
+                'total' => $total_notes
+            ])->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    
     public function loadImagePreview($thumbnail_name)
     {
         $path = storage_path("app/thumbnails/$thumbnail_name"); ;
