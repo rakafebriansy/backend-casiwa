@@ -17,6 +17,7 @@ class NotePreviewResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'description' => $this->description,
             'thumbnail_name' => $this->thumbnail_name,
             'name' => $this->first_name . ' ' . $this->last_name,
             'study_program' => $this->study_program,

@@ -26,9 +26,10 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
         ]);
     });
     Route::post('/upload',[NotesController::class,'upload']);
-    Route::get('/note-detail',[NotesController::class,'getSingleNote']);
     Route::get('/uploaded-notes',[NotesController::class,'getUploadedNotePreviews']);
     Route::get('/downloaded-notes',[NotesController::class,'getDownloadedNotePreviews']);
+    Route::get('/is-bought',[UserController::class,'isBought']);
+    
     Route::get('/test', function() {
         return Auth::user()->id;
     });
@@ -40,5 +41,9 @@ Route::get('/universities',[UserDetailController::class, 'getUniversities']);
 Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
 
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);
+Route::get('/note-details',[NotesController::class,'getSingleNote']);
+Route::get('/note-preview',[NotesController::class,'getSingleNotePreview']);
 Route::get('/total-notes',[NotesController::class, 'getNotePreviews']);
-Route::get('/preview/{path}',[NotesController::class, 'loadImagePreview']);
+
+Route::get('/preview/{name}',[NotesController::class, 'loadImagePreview']);
+Route::get('/document/{name}',[NotesController::class, 'loadDocument']);

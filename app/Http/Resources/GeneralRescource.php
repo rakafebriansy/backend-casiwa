@@ -16,6 +16,7 @@ class GeneralRescource extends JsonResource
     {
         return [
             'success' => $this->success,
+            'data' => $this->data ?? null,
             'message' => $this->message
         ];
     }

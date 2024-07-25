@@ -9,6 +9,8 @@ use App\Http\Resources\LoginResource;
 use App\Http\Resources\RegisterResource;
 use App\Http\Resources\UserResource;
 use App\Http\Utilities\CustomResponse;
+use App\Models\DownloadDetail;
+use App\Models\Note;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -72,5 +74,31 @@ class UserController extends Controller
                 ]
             ]
         ],401));
+    }
+    public function isBought(Request $request)
+    {
+        $user_id = Auth::user()->id;
+        // return response()->json(['ok'=>$request->id]);
+        if(isset($request->id)) {
+            $exists = DownloadDetail::where('note_id',$request->id)->where('user_id',$user_id)->exists();
+            if($exists) {
+                $response = new CustomResponse();
+                $response->success = true;
+                $response->data = [
+                    'login' => true,
+                    'bought' => true
+                ];
+                $response->message = 'Allowed';
+                return (new GeneralRescource($response))->response()->setStatusCode(200);
+            }
+        }
+        $response = new CustomResponse();
+        $response->success = true;
+        $response->data = [
+            'login' => true,
+            'bought' => false
+        ];
+        $response->message = 'Unallowed';
+        return (new GeneralRescource($response))->response()->setStatusCode(200);
     }
 }

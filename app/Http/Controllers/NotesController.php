@@ -54,26 +54,6 @@ class NotesController extends Controller
             ]
         ],500)); 
     }
-
-    public function getSingleNote(Request $request): JsonResponse
-    {
-        try {
-            $notes = Note::select('notes.title','notes.description','notes.file_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
-            ->join('users','users.id','notes.user_di')
-            ->join('study_programs','study_programs.id','users.study_program_id')
-            ->join('universities','universities.id','study_programs.university_id')
-            ->where('notes.id',$request->get('id'))->first();
-            return (NoteResource::collection($notes))->response()->setStatusCode(200);
-        } catch (\PDOException $e) {
-            throw new HttpResponseException(response([
-                'errors' => [
-                    'data' => [
-                        'Data is not found'
-                    ]
-                ]
-            ],500));
-        }
-    }
     public function getNotePreviews(Request $request): JsonResponse
     {
         try {
@@ -135,7 +115,6 @@ class NotesController extends Controller
             ],500));
         }
     }
-
     public function getDownloadedNotePreviews(Request $request): JsonResponse
     {
         try {
@@ -164,11 +143,60 @@ class NotesController extends Controller
             ],500));
         }
     }
-    
-    public function loadImagePreview($thumbnail_name)
+    public function getSingleNote(Request $request): JsonResponse
     {
-        $path = storage_path("app/thumbnails/$thumbnail_name"); ;
-        if (Storage::disk('local')->exists("thumbnails/$thumbnail_name")) {
+        try {
+            $note = Note::select('notes.title','notes.description','notes.file_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->join('users','users.id','notes.user_di')
+            ->join('study_programs','study_programs.id','users.study_program_id')
+            ->join('universities','universities.id','study_programs.university_id')
+            ->where('notes.id',$request->id)->first();
+
+            return (new NoteResource($note))->response()->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function getSingleNotePreview(Request $request): JsonResponse
+    {
+        try {
+            $note = Note::select('notes.id','notes.title', 'notes.description','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->join('users','users.id','notes.user_id')
+            ->join('study_programs','study_programs.id','users.study_program_id')
+            ->join('universities','universities.id','users.university_id')
+            ->where('notes.id',$request->id)->first();
+
+            return (new NotePreviewResource($note))->response()->setStatusCode(200);
+
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function loadImagePreview($name)
+    {
+        $path = storage_path("app/thumbnails/$name"); ;
+        if (Storage::disk('local')->exists("thumbnails/$name")) {
+            return Response::file($path);
+        } else {
+            abort(404);
+        }
+    }
+    public function loadDocument($name)
+    {
+        $path = storage_path("app/pdfs/$name"); ;
+        if (Storage::disk('local')->exists("pdfs/$name")) {
             return Response::file($path);
         } else {
             abort(404);
