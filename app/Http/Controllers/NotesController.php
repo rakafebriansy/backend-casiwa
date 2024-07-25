@@ -12,6 +12,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Spatie\PdfToImage\Pdf;
@@ -44,7 +45,7 @@ class NotesController extends Controller
             $response->success = $result;
             $response->message = $result ? 'Dokumen berhasil diunggah' : 'Dokumen Gagal Diunggah';
 
-            return (new GeneralRescource($response))->response()->setStatusCode(200);
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
         }
         throw new HttpResponseException(response([
             'errors' => [
@@ -147,9 +148,9 @@ class NotesController extends Controller
     {
         try {
             $note = Note::select('notes.title','notes.description','notes.file_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
-            ->join('users','users.id','notes.user_di')
+            ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
-            ->join('universities','universities.id','study_programs.university_id')
+            ->join('universities','universities.id','users.university_id')
             ->where('notes.id',$request->id)->first();
 
             return (new NoteResource($note))->response()->setStatusCode(200);

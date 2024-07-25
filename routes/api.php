@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\NotesController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserDetailController;
 use App\Http\Resources\LoginResource;
@@ -29,6 +30,8 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/uploaded-notes',[NotesController::class,'getUploadedNotePreviews']);
     Route::get('/downloaded-notes',[NotesController::class,'getDownloadedNotePreviews']);
     Route::get('/is-bought',[UserController::class,'isBought']);
+    Route::get('/payment-token',[PaymentController::class,'getPaymentToken']);
+    Route::post('/payment',[PaymentController::class,'doPayment']);
     
     Route::get('/test', function() {
         return Auth::user()->id;

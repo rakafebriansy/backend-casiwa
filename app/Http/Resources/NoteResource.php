@@ -21,7 +21,7 @@ class NoteResource extends JsonResource
             'name' => $this->first_name . ' ' . $this->last_name,
             'study_program' => $this->study_program,
             'university' => $this->university,
-            'date' => date('d-m-Y',$this->created_at)
+            'date' => date('d-m-Y',strtotime($this->created_at)),
         ];
     }
 }

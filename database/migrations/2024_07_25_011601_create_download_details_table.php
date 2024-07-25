@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->unsignedBigInteger('note_id')->nullable(false);
+            $table->string('transaction_id',255)->nullable();
+            $table->string('order_id',255)->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->on('users')->references('id');

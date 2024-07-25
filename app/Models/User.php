@@ -74,4 +74,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(University::class, 'university_id','id');
     }
+    public function download_details(): HasMany
+    {
+        return $this->hasMany(DownloadDetail::class, 'note_id','id');
+    }
 }

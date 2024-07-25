@@ -75,10 +75,9 @@ class UserController extends Controller
             ]
         ],401));
     }
-    public function isBought(Request $request)
+    public function isBought(Request $request): JsonResponse
     {
         $user_id = Auth::user()->id;
-        // return response()->json(['ok'=>$request->id]);
         if(isset($request->id)) {
             $exists = DownloadDetail::where('note_id',$request->id)->where('user_id',$user_id)->exists();
             if($exists) {
