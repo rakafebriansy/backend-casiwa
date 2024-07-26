@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/downloaded-notes',[NotesController::class,'getDownloadedNotePreviews']);
     Route::get('/is-bought',[UserController::class,'isBought']);
     Route::get('/payment-token',[PaymentController::class,'getPaymentToken']);
+    Route::get('/is-paid',[PaymentController::class,'isPaid']);
     
     Route::get('/test', function() {
         return Auth::user()->id;
