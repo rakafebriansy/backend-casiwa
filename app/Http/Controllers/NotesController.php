@@ -120,12 +120,15 @@ class NotesController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->selectRaw('COUNT(*) AS orders.id as download_count')
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
             ->join('orders','users.id','orders.user_id')
-            ->where('users.id',$user_id)->orderBy('notes.title')->get();
+            ->where('users.id',$user_id)
+            ->groupBy('notes.id')
+            ->orderBy('notes.title')->get();
 
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
