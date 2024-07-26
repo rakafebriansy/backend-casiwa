@@ -44,9 +44,9 @@ class PaymentController extends Controller
                 'email' => $user->email
             ),
             'callbacks' => [
-                'finish' => 'note-details/' . $request->id,
-                'pending' => 'note-details/' . $request->id,
-                'error' => 'note-details/' . $request->id
+                'finish' => '/' . $request->id,
+                'pending' => '/' . $request->id,
+                'error' => '/' . $request->id
             ]
         );
         
