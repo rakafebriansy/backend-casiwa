@@ -44,9 +44,9 @@ class PaymentController extends Controller
                 'email' => $user->email
             ),
             'callbacks' => [
-                'finish' => '/' . $request->id,
-                'pending' => '/' . $request->id,
-                'error' => '/' . $request->id
+                'finish' => '/note-details/' . $request->id,
+                'pending' => '/note-details/' . $request->id,
+                'error' => '/note-details/' . $request->id
             ]
         );
         
@@ -131,19 +131,3 @@ class PaymentController extends Controller
         
     }
 }
-
-
-// $user_id = Auth::user()->id;
-// $order = new DownloadDetail();
-// $order->user_id = $user_id;
-// $order->note_id = $request->id;
-// $order->transaction_id = $request->transaction_id;
-// $order->order_id = $request->order_id;
-// $result = $order->save();
-// Log::warning('result' . $result);
-// if($result) {
-//     $response = new CustomResponse();
-//     $response->success = true;
-//     $response->message = 'Pembayaran Berhasil';
-//     return (new GeneralRescource($response))->response()->setStatusCode(200);
-// }
