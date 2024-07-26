@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
-            $table->morphs('tokenable');
-            $table->string('name')->charset('utf8')->collation('utf8_unicode_ci');
+            $table->string('tokenable_type')->charset('utf8')->collation('utf8_unicode_ci'); // Use utf8
+            $table->unsignedBigInteger('tokenable_id');
+            $table->string('name');
             $table->string('token', 64)->unique();
             $table->text('abilities')->nullable();
             $table->timestamp('last_used_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
+        
+            // Adding the index separately
+            $table->index(['tokenable_type', 'tokenable_id']);
         });
+        
     }
 
     /**
