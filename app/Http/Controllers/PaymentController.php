@@ -42,7 +42,12 @@ class PaymentController extends Controller
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'email' => $user->email
-            )
+            ),
+            'callbacks' => [
+                'finish' => 'note-details/' . $request->id,
+                'pending' => 'note-details/' . $request->id,
+                'error' => 'note-details/' . $request->id
+            ]
         );
         
         $snap_token = \Midtrans\Snap::getSnapToken($params);
