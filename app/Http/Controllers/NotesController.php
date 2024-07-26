@@ -121,7 +121,7 @@ class NotesController extends Controller
         try {
             $user_id = Auth::user()->id;
             $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
-            ->selectRaw('COUNT(*) AS orders.id as download_count')
+            ->selectRaw('COUNT(orders.id) AS download_count')
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
