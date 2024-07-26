@@ -17,15 +17,9 @@ class PaymentController extends Controller
     {
         $user = Auth::user();
         
-        $pending = Order::where('user_id',$user->id)->where('status','unpaid')->exists();
+        $pending = Order::where('user_id',$user->id)->where('status','unpaid')->first();
         if($pending) {
-            throw new HttpResponseException(response([
-                'errors' => [
-                    'error' => [
-                        'There\'s Another Process in Queue'
-                    ]
-                ]
-            ],400)); 
+            $pending->delete();
         }
 
         $order = new Order();
