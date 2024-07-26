@@ -76,6 +76,6 @@ class User extends Authenticatable
     }
     public function download_details(): HasMany
     {
-        return $this->hasMany(DownloadDetail::class, 'note_id','id');
+        return $this->hasMany(Order::class, 'note_id','id');
     }
 }

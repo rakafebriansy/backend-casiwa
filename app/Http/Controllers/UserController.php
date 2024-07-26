@@ -6,11 +6,8 @@ use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\LoginResource;
-use App\Http\Resources\RegisterResource;
-use App\Http\Resources\UserResource;
 use App\Http\Utilities\CustomResponse;
-use App\Models\DownloadDetail;
-use App\Models\Note;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -79,7 +76,7 @@ class UserController extends Controller
     {
         $user_id = Auth::user()->id;
         if(isset($request->id)) {
-            $exists = DownloadDetail::where('note_id',$request->id)->where('user_id',$user_id)->exists();
+            $exists = Order::where('note_id',$request->id)->where('user_id',$user_id)->exists();
             if($exists) {
                 $response = new CustomResponse();
                 $response->success = true;

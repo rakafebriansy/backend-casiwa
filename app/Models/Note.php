@@ -26,6 +26,6 @@ class Note extends Model
     }
     public function download_details(): HasMany
     {
-        return $this->hasMany(DownloadDetail::class, 'note_id','id');
+        return $this->hasMany(Note::class, 'note_id','id');
     }
 }

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('download_details', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->unsignedBigInteger('note_id')->nullable(false);
-            $table->string('transaction_id',255)->nullable();
-            $table->string('order_id',255)->nullable();
+            $table->enum('status',['paid','unpaid','failed'])->nullable(false)->default('unpaid');
+            $table->string('transaction_time',255)->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->on('users')->references('id');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('download_details');
+        Schema::dropIfExists('orders');
     }
 };

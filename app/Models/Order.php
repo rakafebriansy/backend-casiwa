@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DownloadDetail extends Model
+class Order extends Model
 {
-    protected $table = 'download_details';
+    protected $table = 'orders';
     protected $primaryKey = 'id';
     protected $keyType = 'int';
     public $incrementing = true;
@@ -16,8 +16,8 @@ class DownloadDetail extends Model
     protected $fillable = [
         'user_id',
         'note_id',
-        'transaction_id',
-        'order_id',
+        'status',
+        'transaction_time',
     ];
     public function user(): BelongsTo
     {

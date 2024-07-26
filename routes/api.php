@@ -31,7 +31,6 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/downloaded-notes',[NotesController::class,'getDownloadedNotePreviews']);
     Route::get('/is-bought',[UserController::class,'isBought']);
     Route::get('/payment-token',[PaymentController::class,'getPaymentToken']);
-    Route::post('/payment',[PaymentController::class,'doPayment']);
     
     Route::get('/test', function() {
         return Auth::user()->id;
@@ -50,3 +49,4 @@ Route::get('/total-notes',[NotesController::class, 'getNotePreviews']);
 
 Route::get('/preview/{name}',[NotesController::class, 'loadImagePreview']);
 Route::get('/document/{name}',[NotesController::class, 'loadDocument']);
+Route::post('/payment',[PaymentController::class,'doPayment']);
