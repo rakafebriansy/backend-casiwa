@@ -16,6 +16,17 @@ class PaymentController extends Controller
     public function getPaymentToken(Request $request): JsonResponse
     {
         $user = Auth::user();
+        
+        $pending = Order::where('user_id',$user->id)->where('status','unpaid')->exists();
+        if($pending) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'There\'s Another Process in Queue'
+                    ]
+                ]
+            ],400)); 
+        }
 
         $order = new Order();
         $order->user_id = $user->id;
