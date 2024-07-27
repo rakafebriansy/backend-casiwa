@@ -214,4 +214,18 @@ class NotesController extends Controller
             abort(404);
         }
     }
+
+    public function download($name)
+    {
+        $user = Auth::user();
+        if($user) {
+            $path = realpath(storage_path("app/pdfs/$name"));
+            if (Storage::disk('local')->exists("pdfs/$name")) {
+                return response()->json(['path' => $path], 200);
+                return response()->download($path, $name, ['Content-Type' => 'application/pdf']);
+            } else {
+                abort(404);
+            }
+        }
+    }
 }
