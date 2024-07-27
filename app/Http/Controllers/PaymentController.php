@@ -73,6 +73,7 @@ class PaymentController extends Controller
     }
     public function doPayment(Request $request): JsonResponse
     {
+        Log::info($request->all());
         $server_key = env('MIDTRANS_SERVER_KEY');
         $status = $request->transaction_status;
         $hashed = hash('sha512',$request->order_id . $request->status_code . $request->gross_amount . $server_key);

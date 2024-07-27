@@ -37,6 +37,7 @@ class NotesController extends Controller
         $note->description = $data['description'];
         $note->file_name = $file_name;
         $note->thumbnail_name = $thumbnail_name;
+        $note->price = 2500; //hardcoded
         $note->user_id = Auth::user()->id;
         $result = $note->save();
 
