@@ -161,7 +161,7 @@ class NotesController extends Controller
 
             return response()->json([
                 'data' => $notes_wrapped,
-                'total' => $user_id
+                'total' => $total_notes
             ])->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
@@ -225,24 +225,21 @@ class NotesController extends Controller
     }
     public function loadDocument($name)
     {
-        $path = storage_path("app/pdfs/$name"); ;
+        $path = Storage::disk('local')->path("pdfs/$name");
+    
         if (Storage::disk('local')->exists("pdfs/$name")) {
-            return Response::file($path);
+            return response()->file($path);
         } else {
             abort(404);
         }
     }
-
     public function download($name)
     {
         $user = Auth::user();
         if($user) {
             $path = realpath(storage_path("app/pdfs/$name"));
-            if (Storage::disk('local')->exists("pdfs/$name")) {
-                return response()->download($path, $name, ['Content-Type' => 'application/pdf']);
-            } else {
-                abort(404);
-            }
+            $headers = ['Content-Type: application/pdf'];
+            return Response::download($path, 'test.pdf', $headers);
         }
     }
 }
