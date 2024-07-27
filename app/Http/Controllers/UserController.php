@@ -76,7 +76,7 @@ class UserController extends Controller
     {
         $user_id = Auth::user()->id;
         if(isset($request->id)) {
-            $exists = Order::where('note_id',$request->id)->where('user_id',$user_id)->exists();
+            $exists = Order::where('note_id',$request->id)->where('user_id',$user_id)->where('status','paid')->exists();
             if($exists) {
                 $response = new CustomResponse();
                 $response->success = true;

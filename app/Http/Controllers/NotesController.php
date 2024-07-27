@@ -125,8 +125,9 @@ class NotesController extends Controller
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
-            ->join('orders','users.id','orders.user_id')
+            ->join('orders','notes.id','orders.note_id')
             ->where('users.id',$user_id)
+            ->where('status','paid')
             ->groupBy(        
             'notes.id',
             'notes.title',
