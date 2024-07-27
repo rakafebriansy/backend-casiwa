@@ -58,10 +58,12 @@ class NotesController extends Controller
     public function getNotePreviews(Request $request): JsonResponse
     {
         try {
-            $notesQuery = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            $notesQuery = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->selectRaw('COUNT(orders.id) AS download_count')
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
-            ->join('universities','universities.id','users.university_id');
+            ->join('universities','universities.id','users.university_id')
+            ->leftJoin('orders','notes.id','orders.note_id');
 
             if(isset($request->university_id)) {
                 $notesQuery->where('universities.id',$request->university_id);
@@ -71,7 +73,13 @@ class NotesController extends Controller
                 $notesQuery->where('study_programs.id',$request->study_program_id);
             }
 
-            $notes = $notesQuery->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->orderBy('title')->get();
+            $notes = $notesQuery
+            ->groupBy(        
+                'notes.id',
+                'notes.title',
+                'notes.thumbnail_name',
+                'notes.created_at',
+            )->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->orderBy('title')->get();
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
 
@@ -93,11 +101,24 @@ class NotesController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            $notes = Note::select('notes.id','notes.title','notes.thumbnail_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            ->selectRaw('COUNT(orders.id) AS download_count')
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
-            ->where('users.id',$user_id)->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->orderBy('notes.title')->get();
+            ->leftJoin('orders','notes.id','orders.note_id')
+            ->where('notes.user_id',$user_id)
+            ->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")
+            ->groupBy(        
+                'notes.id',
+                'notes.title',
+                'notes.thumbnail_name',
+                'notes.created_at',
+                'users.first_name',
+                'users.last_name',
+                'study_programs.name',
+                'universities.name'
+            )->orderBy('notes.title')->get();
 
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
@@ -126,17 +147,13 @@ class NotesController extends Controller
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
             ->join('orders','notes.id','orders.note_id')
-            ->where('users.id',$user_id)
+            ->where('orders.user_id',$user_id)
             ->where('status','paid')
             ->groupBy(        
             'notes.id',
             'notes.title',
             'notes.thumbnail_name',
             'notes.created_at',
-            'users.first_name',
-            'users.last_name',
-            'study_programs.name',
-            'universities.name'
             )->orderBy('notes.title')->get();
 
             $notes_wrapped = NotePreviewResource::collection($notes);
@@ -144,7 +161,7 @@ class NotesController extends Controller
 
             return response()->json([
                 'data' => $notes_wrapped,
-                'total' => $total_notes
+                'total' => $user_id
             ])->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
