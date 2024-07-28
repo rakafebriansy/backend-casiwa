@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('redeem_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
+            $table->string('order_id',255);
             $table->integer('total');
             $table->timestamps();
+
+            $table->foreign('order_id')->on('orders')->references('id');
         });
     }
 
