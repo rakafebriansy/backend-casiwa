@@ -115,10 +115,6 @@ class NotesController extends Controller
                 'notes.title',
                 'notes.thumbnail_name',
                 'notes.created_at',
-                'users.first_name',
-                'users.last_name',
-                'study_programs.name',
-                'universities.name'
             )->orderBy('notes.title')->get();
 
             $notes_wrapped = NotePreviewResource::collection($notes);
