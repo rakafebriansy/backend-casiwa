@@ -229,11 +229,11 @@ class NotesController extends Controller
             ->where('notes.id',$request->id)->first();
 
             return (new NoteResource($note))->response()->setStatusCode(200);
-        } catch (\PDOException $e) {
+        } catch (\Exception $e) {
             throw new HttpResponseException(response([
                 'errors' => [
                     'data' => [
-                        'Data is not found'
+                        $e
                     ]
                 ]
             ],500));
