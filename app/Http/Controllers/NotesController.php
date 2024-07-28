@@ -254,7 +254,7 @@ class NotesController extends Controller
             throw new HttpResponseException(response([
                 'errors' => [
                     'data' => [
-                        'Data is not found'
+                        $e
                     ]
                 ]
             ],500));
