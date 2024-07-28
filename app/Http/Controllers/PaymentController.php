@@ -23,7 +23,7 @@ class PaymentController extends Controller
         }
 
         $order = new Order();
-        $order->id = rand();
+        $order->id = uniqid();
         $order->user_id = $user->id;
         $order->note_id = $request->id;
         $order->status = 'unpaid';
@@ -33,6 +33,8 @@ class PaymentController extends Controller
         \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
         \Midtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED');
         \Midtrans\Config::$is3ds = env('MIDTRANS_IS_3DS');
+
+        Log::info(json_encode($order));
 
         $params = array(
             'transaction_details' => array(
