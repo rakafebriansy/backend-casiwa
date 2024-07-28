@@ -64,7 +64,13 @@ class NotesController extends Controller
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
-            ->leftJoin('orders','notes.id','orders.note_id');
+            ->leftJoin('orders','notes.id','orders.note_id')
+            ->groupBy(        
+                'notes.id',
+                'notes.title',
+                'notes.thumbnail_name',
+                'notes.created_at',
+            );
 
             if(isset($request->university_id)) {
                 $notesQuery->where('universities.id',$request->university_id);
@@ -74,13 +80,7 @@ class NotesController extends Controller
                 $notesQuery->where('study_programs.id',$request->study_program_id);
             }
 
-            $notes = $notesQuery
-            ->groupBy(        
-                'notes.id',
-                'notes.title',
-                'notes.thumbnail_name',
-                'notes.created_at',
-            )->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->orderBy('title')->get();
+            $notes = $notesQuery->whereRaw("LOWER(notes.title) LIKE '%". strtolower($request->keyword)."%'")->orderBy('title')->get();
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
 
