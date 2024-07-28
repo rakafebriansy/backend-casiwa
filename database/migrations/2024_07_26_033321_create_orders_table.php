@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->string('id',255)->nullable(false)->primary();
+            $table->string('id')->charset('utf8')->collation('utf8_unicode_ci')->nullable(false)->primary();
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->unsignedBigInteger('note_id')->nullable(false);
             $table->enum('status',['paid','unpaid','failed','redeemed'])->nullable(false)->default('unpaid');

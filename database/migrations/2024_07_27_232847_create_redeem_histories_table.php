@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('redeem_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id',255);
+            $table->string('order_id')->charset('utf8')->collation('utf8_unicode_ci');
             $table->integer('total');
             $table->timestamps();
 
