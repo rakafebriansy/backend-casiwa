@@ -26,6 +26,7 @@ class UserLoginRequest extends FormRequest
         return [
             'email' => 'required|email',
             'password' => 'required',
+            'rememberme' => 'required'
         ];
     }
     public function messages()

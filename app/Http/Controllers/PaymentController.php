@@ -34,8 +34,6 @@ class PaymentController extends Controller
         \Midtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED');
         \Midtrans\Config::$is3ds = env('MIDTRANS_IS_3DS');
 
-        Log::info(json_encode($order));
-
         $params = array(
             'transaction_details' => array(
                 'order_id' => $order->id,
@@ -53,8 +51,6 @@ class PaymentController extends Controller
             ]
         );
 
-        Log::info(json_encode($params));
-        
         $snap_token = \Midtrans\Snap::getSnapToken($params);
 
         if(isset($snap_token)) {
@@ -78,7 +74,6 @@ class PaymentController extends Controller
     }
     public function doPayment(Request $request): JsonResponse
     {
-        Log::info($request->all());
         $server_key = env('MIDTRANS_SERVER_KEY');
         $status = $request->transaction_status;
         $hashed = hash('sha512',$request->order_id . $request->status_code . $request->gross_amount . $server_key);

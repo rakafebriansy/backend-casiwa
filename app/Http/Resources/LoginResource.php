@@ -18,7 +18,8 @@ class LoginResource extends JsonResource
             'success' => $this->success,
             'message' => $this->message,
             'token' => $this->token,
-            'email' => $this->email
+            'email' => $this->email,
+            'rememberme' => $this->rememberme ?? false
         ];
     }
 }

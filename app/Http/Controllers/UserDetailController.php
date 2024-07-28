@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserDetailResource;
+use App\Models\Bank;
 use App\Models\StudyProgram;
 use App\Models\University;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -31,6 +32,21 @@ class UserDetailController extends Controller
         try {
             $study_programs = StudyProgram::all();
             return (UserDetailResource::collection($study_programs))->response()->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function getBanks(): JsonResponse
+    {
+        try {
+            $banks = Bank::all();
+            return (UserDetailResource::collection($banks))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [

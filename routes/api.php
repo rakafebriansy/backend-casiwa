@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/payment-token',[PaymentController::class,'getPaymentToken']);
     Route::get('/is-paid',[PaymentController::class,'isPaid']);
     Route::get('/download/{name}',[NotesController::class,'download']);
+    Route::get('/profile',[UserController::class,'profile']);
     
     Route::get('/test', function() {
         return Auth::user()->id;
@@ -43,6 +44,7 @@ Route::post('/login',[UserController::class, 'login']);
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);
 Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
+Route::get('/banks',[UserDetailController::class, 'getBanks']);
 
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);
 Route::get('/note-details',[NotesController::class,'getSingleNote']);
