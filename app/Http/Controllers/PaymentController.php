@@ -23,7 +23,7 @@ class PaymentController extends Controller
         }
 
         $order = new Order();
-        $order->id = uniqid();
+        $order->id = rand();
         $order->user_id = $user->id;
         $order->note_id = $request->id;
         $order->status = 'unpaid';
@@ -50,6 +50,8 @@ class PaymentController extends Controller
                 'error' => '/note-details/' . $request->id
             ]
         );
+
+        Log::info(json_encode($params));
         
         $snap_token = \Midtrans\Snap::getSnapToken($params);
 
