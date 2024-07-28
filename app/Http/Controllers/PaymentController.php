@@ -23,6 +23,7 @@ class PaymentController extends Controller
         }
 
         $order = new Order();
+        $order->id = uniqid();
         $order->user_id = $user->id;
         $order->note_id = $request->id;
         $order->status = 'unpaid';
