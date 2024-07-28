@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable(false);
             $table->string('file_name',255)->nullable(false);
             $table->string('thumbnail_name',255)->nullable(false);
-            $table->integer('price',255)->nullable(false);
+            $table->integer('price')->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->softDeletes();
             
