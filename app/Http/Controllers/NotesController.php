@@ -222,7 +222,7 @@ class NotesController extends Controller
     public function getSingleNote(Request $request): JsonResponse
     {
         try {
-            $note = Note::select('notes.title','notes.description','notes.file_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            $note = Note::select('notes.id','notes.title','notes.description','notes.file_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
@@ -242,7 +242,7 @@ class NotesController extends Controller
     public function getSingleNotePreview(Request $request): JsonResponse
     {
         try {
-            $note = Note::select('notes.id','notes.title', 'notes.description','notes.thumbnail_name','notes.created_at','notes.download_count','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
+            $note = Note::select('notes.id','notes.title', 'notes.description','notes.thumbnail_name','notes.created_at','users.first_name','users.last_name','study_programs.name as study_program','universities.name as university')
             ->join('users','users.id','notes.user_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->join('universities','universities.id','users.university_id')
