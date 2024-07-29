@@ -43,12 +43,36 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
         return Auth::user()->id;
     });
 });
+
 Route::post('/admin/login',[AdminController::class, 'login']);
+Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
+    Route::get('/',function(Request $request) {
+        return response()->json([
+            'success' => true
+        ]);
+    });
+});
 
+Route::prefix('/universities')->group(function() {
+    Route::get('/',[UserDetailController::class, 'getUniversities']);
+    Route::get('/store',[UserDetailController::class, 'storeUniversities']);
+    Route::get('/edit',[UserDetailController::class, 'editUniversities']);
+    Route::get('/delete',[UserDetailController::class, 'deleteUniversities']);
+});
 
-Route::get('/universities',[UserDetailController::class, 'getUniversities']);
-Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
-Route::get('/banks',[UserDetailController::class, 'getBanks']);
+Route::prefix('/study-programs')->group(function() {
+    Route::get('/',[UserDetailController::class, 'getStudyPrograms']);
+    Route::post('/store',[UserDetailController::class, 'storeStudyPrograms']);
+    Route::post('/edit',[UserDetailController::class, 'editStudyPrograms']);
+    Route::post('/delete',[UserDetailController::class, 'deleteStudyPrograms']);
+});
+
+Route::prefix('/banks')->group(function() {
+    Route::get('/',[UserDetailController::class, 'getBanks']);
+    Route::post('/store',[UserDetailController::class, 'storeBanks']);
+    Route::post('/edit',[UserDetailController::class, 'editBanks']);
+    Route::post('/delete',[UserDetailController::class, 'deleteBanks']);
+});
 
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);
 Route::get('/note-details',[NotesController::class,'getSingleNote']);

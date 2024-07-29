@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\UserDetailResource;
+use App\Http\Utilities\CustomResponse;
 use App\Models\Bank;
 use App\Models\StudyProgram;
 use App\Models\University;
@@ -17,6 +19,27 @@ class UserDetailController extends Controller
         try {
             $universities = University::all();
             return (UserDetailResource::collection($universities))->response()->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function storeUniversities(Request $request): JsonResponse
+    {
+        try {
+            $university = new University();
+            $university->name = $request->name;
+            $result = $university->save();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data universitas berhasil ditambahkan' : 'Data universitas gagal ditambahkan';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [
