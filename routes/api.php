@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PaymentController;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::post('/register',[UserController::class, 'register']);
+Route::post('/login',[UserController::class, 'login']);
 Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/',function(Request $request) {
         return response()->json([
@@ -40,8 +43,8 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
         return Auth::user()->id;
     });
 });
-Route::post('/register',[UserController::class, 'register']);
-Route::post('/login',[UserController::class, 'login']);
+Route::post('/admin/login',[AdminController::class, 'login']);
+
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);
 Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);

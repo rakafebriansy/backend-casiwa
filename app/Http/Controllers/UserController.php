@@ -120,11 +120,11 @@ class UserController extends Controller
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [
-                    'data' => [
-                        $e
+                    'message' => [
+                        'Email atau kata sandi salah'
                     ]
                 ]
-            ],500));
+            ],401));
         }
     }
     public function editProfile(EditProfileRequest $request)
