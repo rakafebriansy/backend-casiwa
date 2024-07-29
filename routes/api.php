@@ -51,28 +51,28 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
             'success' => true
         ]);
     });
+    Route::prefix('/universities')->group(function() {
+        Route::post('/store',[UserDetailController::class, 'storeUniversities']);
+        Route::post('/edit',[UserDetailController::class, 'editUniversities']);
+        Route::post('/delete',[UserDetailController::class, 'deleteUniversities']);
+    });
+    
+    Route::prefix('/study-programs')->group(function() {
+        Route::post('/store',[UserDetailController::class, 'storeStudyPrograms']);
+        Route::post('/edit',[UserDetailController::class, 'editStudyPrograms']);
+        Route::post('/delete',[UserDetailController::class, 'deleteStudyPrograms']);
+    });
+    
+    Route::prefix('/banks')->group(function() {
+        Route::post('/store',[UserDetailController::class, 'storeBanks']);
+        Route::post('/edit',[UserDetailController::class, 'editBanks']);
+        Route::post('/delete',[UserDetailController::class, 'deleteBanks']);
+    });
 });
 
-Route::prefix('/universities')->group(function() {
-    Route::get('/',[UserDetailController::class, 'getUniversities']);
-    Route::get('/store',[UserDetailController::class, 'storeUniversities']);
-    Route::get('/edit',[UserDetailController::class, 'editUniversities']);
-    Route::get('/delete',[UserDetailController::class, 'deleteUniversities']);
-});
-
-Route::prefix('/study-programs')->group(function() {
-    Route::get('/',[UserDetailController::class, 'getStudyPrograms']);
-    Route::post('/store',[UserDetailController::class, 'storeStudyPrograms']);
-    Route::post('/edit',[UserDetailController::class, 'editStudyPrograms']);
-    Route::post('/delete',[UserDetailController::class, 'deleteStudyPrograms']);
-});
-
-Route::prefix('/banks')->group(function() {
-    Route::get('/',[UserDetailController::class, 'getBanks']);
-    Route::post('/store',[UserDetailController::class, 'storeBanks']);
-    Route::post('/edit',[UserDetailController::class, 'editBanks']);
-    Route::post('/delete',[UserDetailController::class, 'deleteBanks']);
-});
+Route::get('/universities',[UserDetailController::class, 'getUniversities']);
+Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
+Route::get('/banks',[UserDetailController::class, 'getBanks']);
 
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);
 Route::get('/note-details',[NotesController::class,'getSingleNote']);
