@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/is-paid',[PaymentController::class,'isPaid']);
     Route::get('/download/{name}',[NotesController::class,'download']);
     Route::get('/profile',[UserController::class,'profile']);
+    Route::post('/edit-profile',[UserController::class,'editProfile']);
     
     Route::get('/test', function() {
         return Auth::user()->id;
@@ -53,4 +54,5 @@ Route::get('/total-notes',[NotesController::class, 'getNotePreviews']);
 
 Route::get('/preview/{name}',[NotesController::class, 'loadImagePreview']);
 Route::get('/document/{name}',[NotesController::class, 'loadDocument']);
+Route::get('/ktp/{name}',[UserController::class,'loadKTP']);
 Route::post('/payment',[PaymentController::class,'doPayment']);

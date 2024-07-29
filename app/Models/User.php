@@ -28,12 +28,11 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
-        'password',
-        'ktp_image',
         'starting_year',
         'account_number',
         'university_id',
         'study_program_id',
+        'bank_id',
     ];
 
     /**

@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Validation\Validator;
 
 class UploadNoteRequest extends FormRequest
 {
@@ -40,7 +42,13 @@ class UploadNoteRequest extends FormRequest
             'description.max' => 'Deskripsi harus berjumlah maksimal 200 karakter',
             'file.max' => 'File harus berukuran maksimal 20 MB',
             'file.mimes' => 'File harus memiliki ekstensi pdf',
-            'thumbnail.mimes' => 'Thumbnail harus memiliki ekstensi png',
+            'thumbnail.mimes' => 'Thumbnail harus memiliki ekstensi png atau jpg',
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response([
+            'errors' => $validator->getMessageBag()
+        ],400));
     }
 }

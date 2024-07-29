@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditProfileRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Resources\GeneralRescource;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -60,7 +62,6 @@ class UserController extends Controller
         if (Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
             $auth = Auth::user();
             $response = new CustomResponse();
-            Log::info($request->all());
             if(isset($request->rememberme)) {
                 $response->rememberme = true;
             }
@@ -108,21 +109,62 @@ class UserController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $user = User::select('users.*','universities.name as university','study_programs.name as study_program', 'banks.name as bank')
+            $user = User::select('users.*','universities.id as university_id', 'universities.name as university_name','study_programs.id as study_program_id', 'study_programs.name as study_program_name', 'banks.id as bank_id', 'banks.name as bank_name')
             ->join('universities','universities.id','users.university_id')
             ->join('study_programs','study_programs.id','users.study_program_id')
             ->leftJoin('banks','banks.id','users.bank_id')
             ->where('users.id',$user_id)
             ->first();
+            
             return (new UserResource($user))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [
                     'data' => [
-                        'Unauthenticated'
+                        $e
                     ]
                 ]
-            ],401));
+            ],500));
+        }
+    }
+    public function editProfile(EditProfileRequest $request)
+    {
+        $user = Auth::user();
+        Log::info($user->password);
+        $user->fill($request->all());
+        if(!empty($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+        if(!empty($request->file('ktp_image'))) {
+            $ktp_image = $request->file('ktp_image');
+            $file_name = uniqid() . $ktp_image->extension();
+            $ktp_image->storeAs('ktp_images',$file_name);
+            $user->ktp_image = $file_name;
+        }
+        $result = $user->save();
+        if($result) {
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Profil Berhasil diperbarui' : 'Profil Gagal diperbarui';
+
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        }
+        throw new HttpResponseException(response([
+            'errors' => [
+                'error' => [
+                    'Internal Server Error'
+                ]
+            ]
+        ],500)); 
+    }
+    public function loadKTP($name)
+    {
+        $path = Storage::disk('local')->path("ktp_images/$name");
+    
+        if (Storage::disk('local')->exists("ktp_images/$name")) {
+            return response()->file($path);
+        } else {
+            abort(404);
         }
     }
 }
