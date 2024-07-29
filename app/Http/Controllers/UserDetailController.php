@@ -101,4 +101,25 @@ class UserDetailController extends Controller
             ],500));
         }
     }
+    public function storeBanks(Request $request): JsonResponse
+    {
+        try {
+            $bank = new Bank();
+            $bank->name = $request->name;
+            $result = $bank->save();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data bank berhasil ditambahkan' : 'Data bank gagal ditambahkan';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('study_programs', function (Blueprint $table) {
             $table->id();
             $table->string('name',100)->unique()->nullable(false);
-            $table->unsignedBigInteger('study_field_id')->nullable(false);
+            $table->unsignedBigInteger('study_field_id')->nullable();
 
             $table->foreign('study_field_id')->on('study_fields')->references('id')->nu;
         });
