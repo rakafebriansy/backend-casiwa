@@ -65,6 +65,27 @@ class UserDetailController extends Controller
             ],500));
         }
     }
+    public function storeStudyPrograms(Request $request): JsonResponse
+    {
+        try {
+            $study_program = new StudyProgram();
+            $study_program->name = $request->name;
+            $result = $study_program->save();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data program studi berhasil ditambahkan' : 'Data program studi gagal ditambahkan';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
     public function getBanks(): JsonResponse
     {
         try {
