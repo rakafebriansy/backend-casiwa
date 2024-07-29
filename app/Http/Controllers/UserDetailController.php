@@ -54,7 +54,7 @@ class UserDetailController extends Controller
     {
         try {
             $university = University::find($request->id);
-            $university->name = $request->name;
+            $university->name = $request->new_name;
             $result = $university->save();
 
             $response = new CustomResponse();
@@ -76,6 +76,27 @@ class UserDetailController extends Controller
         try {
             $study_programs = StudyProgram::all();
             return (UserDetailResource::collection($study_programs))->response()->setStatusCode(200);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function editStudyPrograms(Request $request): JsonResponse
+    {
+        try {
+            $study_program = StudyProgram::find($request->id);
+            $study_program->name = $request->new_name;
+            $result = $study_program->save();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data program studi berhasil diperbarui' : 'Data program studi gagal diperbarui';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [
