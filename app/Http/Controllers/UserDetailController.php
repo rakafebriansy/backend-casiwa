@@ -32,9 +32,7 @@ class UserDetailController extends Controller
     public function storeUniversities(Request $request): JsonResponse
     {
         try {
-            $university = new University();
-            $university->name = $request->name;
-            $result = $university->save();
+            $result = University::insert(['name' => $request->name]);
 
             $response = new CustomResponse();
             $response->success = $result;
@@ -53,13 +51,32 @@ class UserDetailController extends Controller
     public function editUniversities(Request $request): JsonResponse
     {
         try {
-            $university = University::find($request->id);
-            $university->name = $request->new_name;
-            $result = $university->save();
+            $result = University::where('id',$request->id)->update([
+                'name' => $request->new_name
+            ]);
 
             $response = new CustomResponse();
             $response->success = $result;
             $response->message = $result ? 'Data universitas berhasil diperbarui' : 'Data universitas gagal diperbarui';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function deleteUniversities(Request $request): JsonResponse
+    {
+        try {
+            $result = Bank::where('id',$request->id)->delete();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data universitas berhasil dihapus' : 'Data universitas gagal dihapus';
             return (new GeneralRescource($response))->response()->setStatusCode(201);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
@@ -86,12 +103,31 @@ class UserDetailController extends Controller
             ],500));
         }
     }
+    public function storeStudyPrograms(Request $request): JsonResponse
+    {
+        try {
+            $result = StudyProgram::insert(['name' => $request->name]);
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data program studi berhasil ditambahkan' : 'Data program studi gagal ditambahkan';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
     public function editStudyPrograms(Request $request): JsonResponse
     {
         try {
-            $study_program = StudyProgram::find($request->id);
-            $study_program->name = $request->new_name;
-            $result = $study_program->save();
+            $result = StudyProgram::where('id',$request->id)->update([
+                'name' => $request->new_name
+            ]);
 
             $response = new CustomResponse();
             $response->success = $result;
@@ -107,16 +143,14 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function storeStudyPrograms(Request $request): JsonResponse
+    public function deleteStudyPrograms(Request $request): JsonResponse
     {
         try {
-            $study_program = new StudyProgram();
-            $study_program->name = $request->name;
-            $result = $study_program->save();
+            $result = StudyProgram::where('id',$request->id)->delete();
 
             $response = new CustomResponse();
             $response->success = $result;
-            $response->message = $result ? 'Data program studi berhasil ditambahkan' : 'Data program studi gagal ditambahkan';
+            $response->message = $result ? 'Data program studi berhasil dihapus' : 'Data program studi gagal dihapus';
             return (new GeneralRescource($response))->response()->setStatusCode(201);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
@@ -146,9 +180,7 @@ class UserDetailController extends Controller
     public function storeBanks(Request $request): JsonResponse
     {
         try {
-            $bank = new Bank();
-            $bank->name = $request->name;
-            $result = $bank->save();
+            $result = Bank::insert(['name' => $request->name]);
 
             $response = new CustomResponse();
             $response->success = $result;
@@ -167,13 +199,32 @@ class UserDetailController extends Controller
     public function editBanks(Request $request): JsonResponse
     {
         try {
-            $bank = new Bank();
-            $bank->name = $request->new_name;
-            $result = $bank->save();
+            $result = Bank::where('id',$request->id)->update([
+                'name' => $request->new_name
+            ]);
 
             $response = new CustomResponse();
             $response->success = $result;
-            $response->message = $result ? 'Data bank berhasil diperbarui' : 'Data bank gagal ditambahkan';
+            $response->message = $result ? 'Data bank berhasil diperbarui' : 'Data bank gagal diperbarui';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function deleteBanks(Request $request): JsonResponse
+    {
+        try {
+            $result = Bank::where('id',$request->id)->delete();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data bank berhasil dihapus' : 'Data bank gagal dihapus';
             return (new GeneralRescource($response))->response()->setStatusCode(201);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
