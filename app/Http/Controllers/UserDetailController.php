@@ -50,6 +50,27 @@ class UserDetailController extends Controller
             ],500));
         }
     }
+    public function editUniversities(Request $request): JsonResponse
+    {
+        try {
+            $university = University::find($request->id);
+            $university->name = $request->name;
+            $result = $university->save();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Data universitas berhasil diperbarui' : 'Data universitas gagal diperbarui';
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Data is not found'
+                    ]
+                ]
+            ],500));
+        }
+    }
     public function getStudyPrograms(): JsonResponse
     {
         try {
