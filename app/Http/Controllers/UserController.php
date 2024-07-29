@@ -106,8 +106,6 @@ class UserController extends Controller
 
     public function profile(Request $request): JsonResponse
     {
-        
-
         try {
             $user_id = Auth::user()->id;
             $user = User::select('users.*','universities.name as university','study_programs.name as study_program', 'banks.name as bank')
