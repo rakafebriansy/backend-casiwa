@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-Route::prefix('/test')->group(function() {
-    Route::get('/pdf-viewer',[TestController::class,'pdfView']);
-    Route::get('/pdf-to-image',[TestController::class,'upload']);
-});
+// Route::prefix('/test')->group(function() {
+//     Route::get('/pdf-viewer',[TestController::class,'pdfView']);
+//     Route::get('/pdf-to-image',[TestController::class,'upload']);
+// });

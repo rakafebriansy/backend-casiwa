@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([UniversitySeeder::class, BankSeeder::class]);
+        $this->call([UniversitySeeder::class, BankSeeder::class, AdminSeeder::class]);
         User::insert([
             'first_name' => 'Tria',
             'last_name' => 'Putri Ananda',
