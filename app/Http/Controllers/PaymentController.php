@@ -87,6 +87,7 @@ class PaymentController extends Controller
                 ]);
                 $user = $order->note->user;
                 $user->balance += intval($request->gross_amount);
+                Log::info($user->balance += intval($request->gross_amount));
                 $user->save();
             } else if ($status == 'expire' || $status == 'deny' || $status == 'cancel' || $status == 'failure'){
                 $order->update([
