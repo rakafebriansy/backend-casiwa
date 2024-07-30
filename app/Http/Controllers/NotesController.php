@@ -43,7 +43,7 @@ class NotesController extends Controller
         if($result) {
             $response = new CustomResponse();
             $response->success = $result;
-            $response->message = $result ? 'Dokumen berhasil diunggah' : 'Dokumen Gagal Diunggah';
+            $response->message = $result ? 'Dokumen berhasil diunggah. Silahkan refresh!' : 'Dokumen Gagal Diunggah';
 
             return (new GeneralRescource($response))->response()->setStatusCode(201);
         }
