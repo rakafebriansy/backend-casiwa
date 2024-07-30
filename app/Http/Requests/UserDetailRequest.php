@@ -26,13 +26,7 @@ class UserDetailRequest extends FormRequest
     {
         return [
             'id' => 'nullable',
-            'name' => 'required',
-        ];
-    }
-    public function messages()
-    {
-        return [
-            'name.required' => 'Nama tidak boleh kosong',
+            'name' => 'nullable',
         ];
     }
     protected function failedValidation(Validator $validator)

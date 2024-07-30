@@ -7,11 +7,13 @@ use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\UserDetailResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Bank;
+use App\Models\Order;
 use App\Models\StudyProgram;
 use App\Models\University;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class UserDetailController extends Controller
@@ -79,7 +81,7 @@ class UserDetailController extends Controller
     {
         try {
             $data = $request->validated();
-            $result = Bank::where('id',$data['id'])->delete();
+            $result = University::where('id',$data['id'])->delete();
 
             $response = new CustomResponse();
             $response->success = $result;
@@ -90,7 +92,7 @@ class UserDetailController extends Controller
             throw new HttpResponseException(response([
                 'errors' => [
                     'data' => [
-                        'Internal Server Error'
+                        'Data Universitas tidak dapat dihapus'
                     ]
                 ]
             ],500));
@@ -246,6 +248,27 @@ class UserDetailController extends Controller
             $response->message = $result ? 'Data bank berhasil dihapus' : 'Data bank gagal dihapus';
             $response->data = Bank::all()->toArray();
             return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $e) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'data' => [
+                        'Internal Server Error'
+                    ]
+                ]
+            ],500));
+        }
+    }
+    public function getBalance(): JsonResponse
+    {
+        try {
+            $user_id = Auth::user()->id;
+            $total_balance = Order::where('user_id',$user_id)->where('status','paid')->count();
+
+            $response = new CustomResponse();
+            $response->success = isset($total_balance);
+            $response->message = isset($total_balance) ? 'Data poin berhasil didapatkan' : 'Data poin gagal didapatkan';
+            $response->data = $total_balance;
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
                 'errors' => [

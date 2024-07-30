@@ -68,6 +68,7 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
         Route::post('/edit',[UserDetailController::class, 'editBanks']);
         Route::post('/delete',[UserDetailController::class, 'deleteBanks']);
     });
+    Route::get('/get-balance',[UserDetailController::class, 'getBalance']);
 });
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);

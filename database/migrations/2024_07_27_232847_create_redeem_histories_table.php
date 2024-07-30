@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('redeem_histories', function (Blueprint $table) {
             $table->id();
             $table->integer('total');
-            $table->string('order_id')->charset('utf8')->collation('utf8_unicode_ci')->nullable(false);
+            $table->unsignedBigInteger('user_id')->nullable(false);
             $table->unsignedBigInteger('admin_id')->nullable(false);
             $table->timestamps();
 
-            $table->foreign('order_id')->on('orders')->references('id');
+            $table->foreign('user_id')->on('users')->references('id');
             $table->foreign('admin_id')->on('admins')->references('id');
         });
     }

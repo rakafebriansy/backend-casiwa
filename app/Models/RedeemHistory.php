@@ -7,5 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class RedeemHistory extends Model
 {
-    use HasFactory;
+    protected $table = 'reedem_histories';
+    protected $primaryKey = 'id';
+    protected $keyType = 'int';
+    public $incrementing = true;
+    public $timestamps = true;
+    protected $fillable = [
+        'id',
+        'user_id',
+        'admin_id',
+        'total',
+    ];
 }
