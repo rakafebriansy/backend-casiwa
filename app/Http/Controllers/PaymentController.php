@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\GeneralRescource;
 use App\Http\Utilities\CustomResponse;
+use App\Models\Note;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -85,7 +87,8 @@ class PaymentController extends Controller
                     'payment_type' => $request->payment_type,
                     'transaction_time' => $request->transaction_time
                 ]);
-                $user = $order->note()->user();
+                $note = Note::where('id',$order->note_id)->first();
+                $user = User::where('id',$note->user_id)->first();
                 $user->balance += intval($request->gross_amount);
                 $user->save();
             } else if ($status == 'expire' || $status == 'deny' || $status == 'cancel' || $status == 'failure'){
