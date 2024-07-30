@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/download/{name}',[NotesController::class,'download']);
     Route::get('/profile',[UserController::class,'profile']);
     Route::post('/edit-profile',[UserController::class,'editProfile']);
+    Route::get('/get-balance',[UserDetailController::class, 'getBalance']);
     
     Route::get('/test', function() {
         return Auth::user()->id;
@@ -68,7 +69,6 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
         Route::post('/edit',[UserDetailController::class, 'editBanks']);
         Route::post('/delete',[UserDetailController::class, 'deleteBanks']);
     });
-    Route::get('/get-balance',[UserDetailController::class, 'getBalance']);
 });
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);
