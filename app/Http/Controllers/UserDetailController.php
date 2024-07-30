@@ -262,7 +262,7 @@ class UserDetailController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $total_balance = Order::where('user_id',$user_id)->where('status','paid')->count();
+            $total_balance = Order::join('notes','orders.note_id','notes.id')->join('users','users.id','notes.user_id')->where('users.id',$user_id)->where('orders.status','paid')->count();
 
             $response = new CustomResponse();
             $response->success = isset($total_balance);
