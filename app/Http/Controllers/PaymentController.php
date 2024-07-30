@@ -85,6 +85,9 @@ class PaymentController extends Controller
                     'payment_type' => $request->payment_type,
                     'transaction_time' => $request->transaction_time
                 ]);
+                $user = $order->note()->user();
+                $user->balance += intval($request->gross_amount);
+                $user->save();
             } else if ($status == 'expire' || $status == 'deny' || $status == 'cancel' || $status == 'failure'){
                 $order->update([
                     'status' => 'failed',

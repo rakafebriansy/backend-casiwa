@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'starting_year',
         'account_number',
+        'balance',
         'university_id',
         'study_program_id',
         'bank_id',
@@ -75,7 +76,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(University::class, 'university_id','id');
     }
-    public function download_details(): HasMany
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'note_id','id');
     }

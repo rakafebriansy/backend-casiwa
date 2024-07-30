@@ -24,8 +24,8 @@ class Note extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-    public function download_details(): HasMany
+    public function orders(): HasMany
     {
-        return $this->hasMany(Note::class, 'note_id','id');
+        return $this->hasMany(Order::class, 'note_id','id');
     }
 }

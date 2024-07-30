@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('id')->charset('utf8')->collation('utf8_unicode_ci')->nullable(false)->primary();
             $table->unsignedBigInteger('user_id')->nullable(false);
             $table->unsignedBigInteger('note_id')->nullable(false);
-            $table->enum('status',['paid','unpaid','failed','redeemed'])->nullable(false)->default('unpaid');
+            $table->enum('status',['paid','unpaid','failed'])->nullable(false)->default('unpaid');
             $table->string('transaction_time',255)->nullable();
             $table->timestamps();
 

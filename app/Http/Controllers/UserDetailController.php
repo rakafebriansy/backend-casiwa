@@ -261,13 +261,12 @@ class UserDetailController extends Controller
     public function getBalance(): JsonResponse
     {
         try {
-            $user_id = Auth::user()->id;
-            $total_balance = Order::join('notes','orders.note_id','notes.id')->join('users','users.id','notes.user_id')->where('users.id',$user_id)->where('orders.status','paid')->count();
+            $balance = Auth::user()->balance;
 
             $response = new CustomResponse();
-            $response->success = isset($total_balance);
-            $response->message = isset($total_balance) ? 'Data poin berhasil didapatkan' : 'Data poin gagal didapatkan';
-            $response->data = $total_balance * 100000; //price is hardcoded
+            $response->success = true;
+            $response->message = 'Data saldo berhasil didapatkan';
+            $response->data = $balance * 100; //price is hardcoded
             return (new GeneralRescource($response))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
