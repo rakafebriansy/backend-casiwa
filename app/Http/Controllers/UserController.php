@@ -104,7 +104,6 @@ class UserController extends Controller
         $response->message = 'Unallowed';
         return (new GeneralRescource($response))->response()->setStatusCode(200);
     }
-
     public function profile(Request $request): JsonResponse
     {
         try {

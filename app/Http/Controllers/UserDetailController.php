@@ -267,7 +267,7 @@ class UserDetailController extends Controller
             $response = new CustomResponse();
             $response->success = isset($total_balance);
             $response->message = isset($total_balance) ? 'Data poin berhasil didapatkan' : 'Data poin gagal didapatkan';
-            $response->data = $total_balance;
+            $response->data = $total_balance * 2500; //price is hardcoded
             return (new GeneralRescource($response))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
