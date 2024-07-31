@@ -142,12 +142,12 @@ class PaymentController extends Controller
         $user = Auth::user();
         $total = $request->total;
 
-        $result = DB::transaction(function() use ($user, $total) {
+        DB::transaction(function() use ($user, $total) {
             $user->balance -= $total;
             $result = $user->save();
     
             if($result) {
-                return RedeemHistory::insert([
+                RedeemHistory::insert([
                     'total' => $user->balance
                 ]);
             }
