@@ -147,17 +147,17 @@ class PaymentController extends Controller
             $result = $user->save();
     
             if($result) {
-                RedeemHistory::insert([
-                    'total' => $user->balance,
-                    'user_id' => $user->id
-                ]);
-            }
-            if($result) {
-                $response = new CustomResponse();
-                $response->success = true;
-                $response->message = 'Berhasil melakukan redeem, tunggu proses berikutnya';
-    
-                return (new GeneralRescource($response))->response()->setStatusCode(200);
+                $redeem_history = new RedeemHistory();
+                $redeem_history->total = $total;
+                $redeem_history->user_id = $user->id;
+                $result_2 = $redeem_history->save();
+                if($result_2) {
+                    $response = new CustomResponse();
+                    $response->success = true;
+                    $response->message = 'Berhasil melakukan redeem, tunggu proses berikutnya';
+        
+                    return (new GeneralRescource($response))->response()->setStatusCode(200);
+                }
             }
             throw new HttpResponseException(response([
                 'errors' => [
