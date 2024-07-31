@@ -128,6 +128,7 @@ class UserController extends Controller
     }
     public function editProfile(EditProfileRequest $request)
     {
+        Log::info(json_encode($request->all()));
         $data = $request->validated();
         $user = Auth::user();
         Log::info($user->password);
