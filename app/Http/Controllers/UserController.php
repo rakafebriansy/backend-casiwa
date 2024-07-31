@@ -128,9 +128,10 @@ class UserController extends Controller
     }
     public function editProfile(EditProfileRequest $request)
     {
+        $data = $request->validated();
         $user = Auth::user();
         Log::info($user->password);
-        $user->fill($request->all());
+        $user->fill($data);
         if(!empty($request->password)) {
             $user->password = Hash::make($request->password);
         }
