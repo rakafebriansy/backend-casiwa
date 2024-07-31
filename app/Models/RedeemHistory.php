@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RedeemHistory extends Model
 {
-    protected $table = 'reedem_histories';
+    protected $table = 'redeem_histories';
     protected $primaryKey = 'id';
     protected $keyType = 'int';
     public $incrementing = true;
