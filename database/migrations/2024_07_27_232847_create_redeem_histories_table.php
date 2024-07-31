@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('redeem_histories', function (Blueprint $table) {
             $table->id();
-            $table->integer('total');
+            $table->integer('total')->nullable(false);
             $table->enum('status',['accepted','denied','on-process'])->default('on-process')->nullable(false);
             $table->unsignedBigInteger('user_id')->nullable(false);
-            $table->unsignedBigInteger('admin_id')->nullable(false);
+            $table->unsignedBigInteger('admin_id')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->on('users')->references('id');
