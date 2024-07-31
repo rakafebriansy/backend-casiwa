@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\GeneralRescource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Order;
+use App\Models\RedeemHistory;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
@@ -80,14 +82,16 @@ class PaymentController extends Controller
         if($hashed == $request->signature_key) {
             $order = Order::find($request->order_id);
             if($status == 'capture' || $status == 'settlement') {
-                $order->update([
-                    'status' => 'paid',
-                    'payment_type' => $request->payment_type,
-                    'transaction_time' => $request->transaction_time
-                ]);
-                $user = $order->note->user;
-                $user->balance += intval($request->gross_amount);
-                $user->save();
+                DB::transaction(function () use ($order, $request) {
+                    $order->update([
+                        'status' => 'paid',
+                        'payment_type' => $request->payment_type,
+                        'transaction_time' => $request->transaction_time
+                    ]);
+                    $user = $order->note->user;
+                    $user->balance += intval($request->gross_amount);
+                    $user->save();
+                },3);
             } else if ($status == 'expire' || $status == 'deny' || $status == 'cancel' || $status == 'failure'){
                 $order->update([
                     'status' => 'failed',
@@ -131,7 +135,38 @@ class PaymentController extends Controller
                     $request->id
                 ]
             ]
-        ],500)); 
-        
+        ],500));    
+    }
+    public function doRedeem(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        $total = $request->total;
+
+        $result = DB::transaction(function() use ($user, $total) {
+            $user->balance -= $total;
+            $result = $user->save();
+    
+            if($result) {
+                return RedeemHistory::insert([
+                    'total' => $user->balance
+                ]);
+            }
+        },3);
+
+        if($result) {
+            $response = new CustomResponse();
+            $response->success = true;
+            $response->message = 'Berhasil melakukan redeem, tunggu proses berikutnya';
+
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        }
+
+        throw new HttpResponseException(response([
+            'errors' => [
+                'error' => [
+                    'Internal Server Error'
+                ]
+            ]
+        ],500));
     }
 }

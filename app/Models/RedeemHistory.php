@@ -16,6 +16,7 @@ class RedeemHistory extends Model
         'id',
         'user_id',
         'admin_id',
+        'status',
         'total',
     ];
 }
