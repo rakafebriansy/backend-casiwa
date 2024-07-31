@@ -137,7 +137,7 @@ class UserController extends Controller
         }
         if(!empty($request->file('ktp_image'))) {
             $ktp_image = $request->file('ktp_image');
-            $file_name = uniqid() . $ktp_image->extension();
+            $file_name = uniqid() . '.' . $ktp_image->extension();
             $ktp_image->storeAs('ktp_images',$file_name);
             $user->ktp_image = $file_name;
         }
