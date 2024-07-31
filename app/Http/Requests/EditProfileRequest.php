@@ -34,8 +34,8 @@ class EditProfileRequest extends FormRequest
             'university_id' => 'required|numeric',
             'study_program_id' => 'required|numeric',
             'bank_id' => 'required|numeric',
-            'account_number ' => 'required|numeric',
-            'ktp_image ' => 'required|mimes:png,jpg|max:1024',
+            'account_number' => 'required|numeric',
+            'ktp_image' => 'required|mimes:png,jpg|max:1024',
         ];
     }
     public function messages()
@@ -46,15 +46,16 @@ class EditProfileRequest extends FormRequest
             'starting_year.required' => 'Tahun Masuk Perkuliahan tidak boleh kosong',
             'university_id.required' => 'Universitas belum dipilih',
             'study_program_id.required' => 'Program Studi belum dipilih',
-            'account_number.required' => 'Nomor Rekening tidak boleh kosong',
             'ktp_image.required' => 'Foto KTP tidak boleh kosong',
             'bank_id.required' => 'Bank belum dipilih',
+            'account_number.required' => 'Nomor Rekening tidak boleh kosong',
             'first_name.max' => 'Nama Depan harus berjumlah maksimal 60 karakter',
             'last_name.max' => 'Nama Belakang harus berjumlah maksimal 60 karakter',
             'email.email' => 'Alamat Email tidak valid',
             'password.min' => 'Kata Sandi harus berjumlah minimal 8 karakter',
             'starting_year.string' => 'Tahun Masuk Perkuliahan harus berupa angka',
             'university_id.numeric' => 'Universitas belum dipilih',
+            'account_number.numeric' => 'Nomor Rekening harus berupa angka',
             'study_program_id.numeric' => 'Program Studi belum dipilih',
             'starting_year.size' => 'Tahun Masuk Perkuliahan harus berjumlah 4 digit',
             'confirm_password.same' => 'Konfirmasi Kata Sandi tidak sesuai',
