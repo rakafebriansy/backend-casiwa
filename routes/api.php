@@ -32,10 +32,11 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::post('/upload',[NotesController::class,'upload']);
     Route::get('/uploaded-notes',[NotesController::class,'getUploadedNotePreviews']);
     Route::get('/downloaded-notes',[NotesController::class,'getDownloadedNotePreviews']);
+    Route::get('/download/{name}',[NotesController::class,'download']);
     Route::get('/is-bought',[UserController::class,'isBought']);
     Route::get('/payment-token',[PaymentController::class,'getPaymentToken']);
     Route::get('/is-paid',[PaymentController::class,'isPaid']);
-    Route::get('/download/{name}',[NotesController::class,'download']);
+    Route::post('/redeem',[PaymentController::class, 'doRedeem']);
     Route::get('/profile',[UserController::class,'profile']);
     Route::post('/edit-profile',[UserController::class,'editProfile']);
     Route::get('/get-balance',[UserDetailController::class, 'getBalance']);
