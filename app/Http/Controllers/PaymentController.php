@@ -141,32 +141,42 @@ class PaymentController extends Controller
     {
         $user = Auth::user();
         $total = $request->total;
-
-        DB::transaction(function() use ($user, $total) {
+        try {
+            DB::beginTransaction();
             $user->balance -= $total;
             $result = $user->save();
     
             if($result) {
                 RedeemHistory::insert([
-                    'total' => $user->balance
+                    'total' => $user->balance,
+                    'user_id' => $user->id
                 ]);
             }
-        },3);
-
-        if($result) {
-            $response = new CustomResponse();
-            $response->success = true;
-            $response->message = 'Berhasil melakukan redeem, tunggu proses berikutnya';
-
-            return (new GeneralRescource($response))->response()->setStatusCode(200);
+            if($result) {
+                $response = new CustomResponse();
+                $response->success = true;
+                $response->message = 'Berhasil melakukan redeem, tunggu proses berikutnya';
+    
+                return (new GeneralRescource($response))->response()->setStatusCode(200);
+            }
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'Internal Server Error'
+                    ]
+                ]
+            ],500));
+        } catch (\PDOException $e) {
+            DB::rollback();
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'Error message: ' . $e
+                    ]
+                ]
+            ],500));
         }
 
-        throw new HttpResponseException(response([
-            'errors' => [
-                'error' => [
-                    'Internal Server Error'
-                ]
-            ]
-        ],500));
+
     }
 }
