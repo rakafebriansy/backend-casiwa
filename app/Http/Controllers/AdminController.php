@@ -9,6 +9,7 @@ use App\Http\Utilities\CustomResponse;
 use App\Models\RedeemHistory;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -40,10 +41,39 @@ class AdminController extends Controller
     }
     public function getUnpaidRedeem(): JsonResponse
     {
-        $unpaid_redeems = RedeemHistory::select('users.first_name', 'users.last_name', 'users.email', 'users.ktp_image', 'users.account_number', 'banks.name as bank_name', 'redeem_histories.total', 'redeem_histories.id')
+        $unpaid_redeems = RedeemHistory::select('users.first_name', 'users.last_name', 'users.ktp_image', 'users.account_number', 'banks.name as bank_name', 'redeem_histories.total', 'redeem_histories.id')
         ->join('users','users.id','redeem_histories.user_id')
         ->join('banks','users.bank_id','banks.id')
         ->where('status','on-process')->get();
         return (UnpaidRedeemResource::collection($unpaid_redeems))->response()->setStatusCode(200);
+    }
+    public function redeemUser(Request $request): JsonResponse
+    {
+        $admin = Auth::guard('admin')->user();
+        if(isset($request->decision)) {
+            $response = new CustomResponse();
+            $response->success = true;
+            if($request->decision) {
+                RedeemHistory::where('id',$request->id)->update([
+                    'status' => 'accepted',
+                    'admin_id' => $admin->id
+                ]);
+                $response->message = "Berhasil menerima permintaan";
+            } else {
+                RedeemHistory::where('id',$request->id)->update([
+                    'status' => 'denied',
+                    'admin_id' => $admin->id
+                ]);
+                $response->message = "Berhasil menolak permintaan";
+            }
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        }
+        throw new HttpResponseException(response([
+            "errors" => [
+                "error" => [
+                    "Internal Server Error"
+                ]
+            ]
+        ],500));
     }
 }
