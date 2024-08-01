@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
         Route::post('/delete',[UserDetailController::class, 'deleteBanks']);
     });
     Route::prefix('/redeem')->group(function() {
+        Route::post('/',[AdminController::class, 'redeemUser']);
         Route::get('/unpaid',[AdminController::class, 'getUnpaidRedeem']);
         // Route::get('/paid',[AdminController::class, 'getRedeemHistories']);
     });
