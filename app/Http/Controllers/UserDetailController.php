@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserDetailRequest;
 use App\Http\Resources\GeneralRescource;
+use App\Http\Resources\RedeemHistoryResource;
 use App\Http\Resources\UserDetailResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Bank;
 use App\Models\Order;
+use App\Models\RedeemHistory;
 use App\Models\StudyProgram;
 use App\Models\University;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -277,5 +279,12 @@ class UserDetailController extends Controller
                 ]
             ],500));
         }
+    }
+    public function getRedeemHistories()
+    {
+        $user_id = Auth::user()->id;
+        $redeem_histories = RedeemHistory::select('redeem_histories.id','redeem_histories.updated_at as datetime','redeem_histories.total','redeem_histories.status')
+        ->where('user_id',$user_id)->get();
+        return (RedeemHistoryResource::collection($redeem_histories))->response()->setStatusCode(200);
     }
 }

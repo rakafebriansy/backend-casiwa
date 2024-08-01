@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::get('/is-bought',[UserController::class,'isBought']);
     Route::get('/payment-token',[PaymentController::class,'getPaymentToken']);
     Route::get('/is-paid',[PaymentController::class,'isPaid']);
+    Route::get('/redeem',[UserDetailController::class, 'getRedeemHistories']);
     Route::post('/redeem',[PaymentController::class, 'doRedeem']);
     Route::get('/profile',[UserController::class,'profile']);
     Route::post('/edit-profile',[UserController::class,'editProfile']);

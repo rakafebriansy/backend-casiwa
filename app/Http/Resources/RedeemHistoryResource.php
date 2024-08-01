@@ -16,7 +16,7 @@ class RedeemHistoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->first_name . ' ' . $this->last_name,
+            'name' => $this->first_name . ' ' . $this->last_name ?? null,
             'datetime' => $this->datetime,
             'total' => $this->total,
             'status' => $this->status,
