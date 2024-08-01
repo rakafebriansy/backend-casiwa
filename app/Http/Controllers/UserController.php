@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EditProfileRequest;
+use App\Http\Requests\UserEditProfileRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Resources\GeneralRescource;
@@ -126,7 +127,7 @@ class UserController extends Controller
             ],401));
         }
     }
-    public function editProfile(EditProfileRequest $request)
+    public function editProfile(UserEditProfileRequest $request)
     {
         $data = $request->validated();
         $user = Auth::user();

@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Foundation\Http\FormRequest;
 
-class UserLoginRequest extends FormRequest
+class AdminEditPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,17 +24,16 @@ class UserLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
             'password' => 'required',
-            'rememberme' => 'required'
+            'confirm_password' => 'required|same:password',
         ];
     }
     public function messages()
     {
         return [
-            'email.required' => 'Alamat Email tidak boleh kosong',
             'password.required' => 'Kata Sandi tidak boleh kosong',
-            'email.email' => 'Alamat Email tidak valid',
+            'confirm_password.required' => 'Konfirmasi kata sandi tidak boleh kosong',
+            'confirm_password.same' => 'Konfirmasi Kata Sandi tidak sesuai',
         ];
     }
     protected function failedValidation(Validator $validator)

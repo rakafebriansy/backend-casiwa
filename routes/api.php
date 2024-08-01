@@ -75,6 +75,7 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
         Route::get('/unpaid',[AdminController::class, 'getUnpaidRedeem']);
         Route::get('/history',[AdminController::class, 'getRedeemHistories']);
     });
+    Route::post('/edit-password',[AdminController::class,'editPassword']);
 });
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);

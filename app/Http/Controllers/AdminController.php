@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminEditPasswordRequest;
 use App\Http\Requests\AdminLoginRequest;
 use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\RedeemHistoryResource;
 use App\Http\Resources\UnpaidRedeemResource;
 use App\Http\Utilities\CustomResponse;
+use App\Models\Admin;
 use App\Models\RedeemHistory;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
@@ -84,5 +87,27 @@ class AdminController extends Controller
         $redeem_histories = RedeemHistory::select('redeem_histories.id','redeem_histories.updated_at as datetime','redeem_histories.total','redeem_histories.status', 'users.first_name','users.last_name')
         ->join('users','users.id','redeem_histories.user_id')->get();
         return (RedeemHistoryResource::collection($redeem_histories))->response()->setStatusCode(200);
+    }
+    public function editPassword(AdminEditPasswordRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $admin = Admin::find(Auth::user()->id);
+        $admin->password = Hash::make($request->password);
+        $result = $admin->save();
+        if ($result) {
+            $response = new CustomResponse();
+            $response->success = true;
+            $response->message = "Berhasil mengubah kata sandi";
+
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        }
+        throw new HttpResponseException(response([
+            "errors" => [
+                "error" => [
+                    "Internal Server Error"
+                ]
+            ]
+        ],500));
     }
 }
