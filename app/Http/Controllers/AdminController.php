@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminLoginRequest;
 use App\Http\Resources\GeneralRescource;
+use App\Http\Resources\RedeemHistoryResource;
 use App\Http\Resources\UnpaidRedeemResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\RedeemHistory;
@@ -77,5 +78,11 @@ class AdminController extends Controller
                 ]
             ]
         ],500));
+    }
+    public function getRedeemHistories()
+    {
+        $redeem_histories = RedeemHistory::select('redeem_histories.id','redeem_histories.updated_at as datetime','redeem_histories.total','admins.username as admin')
+        ->join('admins','admins.id','redeem_histories.admin_id')->get();
+        return (RedeemHistoryResource::collection($redeem_histories))->response()->setStatusCode(200);
     }
 }
