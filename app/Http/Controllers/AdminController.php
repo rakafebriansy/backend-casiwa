@@ -81,8 +81,8 @@ class AdminController extends Controller
     }
     public function getRedeemHistories()
     {
-        $redeem_histories = RedeemHistory::select('redeem_histories.id','redeem_histories.updated_at as datetime','redeem_histories.total','admins.username as admin')
-        ->join('admins','admins.id','redeem_histories.admin_id')->get();
+        $redeem_histories = RedeemHistory::select('redeem_histories.id','redeem_histories.updated_at as datetime','redeem_histories.total','redeem_histories.status', 'users.first_name','users.last_name')
+        ->join('users','users.id','redeem_histories.user_id')->get();
         return (RedeemHistoryResource::collection($redeem_histories))->response()->setStatusCode(200);
     }
 }
