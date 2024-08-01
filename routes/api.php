@@ -70,6 +70,10 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
         Route::post('/edit',[UserDetailController::class, 'editBanks']);
         Route::post('/delete',[UserDetailController::class, 'deleteBanks']);
     });
+    Route::prefix('/redeem')->group(function() {
+        Route::get('/unpaid',[AdminController::class, 'getUnpaidRedeem']);
+        // Route::get('/paid',[AdminController::class, 'getPaidRedeem']);
+    });
 });
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminLoginRequest;
 use App\Http\Resources\GeneralRescource;
+use App\Http\Resources\UnpaidRedeemResource;
 use App\Http\Utilities\CustomResponse;
+use App\Models\RedeemHistory;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -35,5 +37,12 @@ class AdminController extends Controller
                 ]
             ]
         ],401));
+    }
+    public function getUnpaidRedeem(): JsonResponse
+    {
+        $unpaid_redeems = RedeemHistory::select('users.first_name', 'users.last_name', 'users.email', 'users.ktp_image', 'users.account_number', 'banks.name as bank_name', 'redeem_histories.total', 'redeem_histories.id')
+        ->join('users','users.id','redeem_histories.user_id')
+        ->where('status','on-process')->get();
+        return (UnpaidRedeemResource::collection($unpaid_redeems))->response()->setStatusCode(200);
     }
 }

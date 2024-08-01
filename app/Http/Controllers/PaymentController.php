@@ -142,6 +142,16 @@ class PaymentController extends Controller
         $user = Auth::user();
         $total = $request->total;
         try {
+            $allowed = RedeemHistory::where('user_id',$user->id)->where('status','on-process')->exists();
+            if(!$allowed) {
+                throw new HttpResponseException(response([
+                    'errors' => [
+                        'error' => [
+                            'Permintaan anda sebelumnya sedang dalam antrian'
+                        ]
+                    ]
+                ],500));
+            }
             DB::beginTransaction();
             $user->balance -= $total;
             $result = $user->save();
