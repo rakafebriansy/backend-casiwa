@@ -11,6 +11,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -49,7 +50,8 @@ class AdminController extends Controller
     }
     public function redeemUser(Request $request): JsonResponse
     {
-        $admin = Auth::guard('admin')->user();
+        $admin = Auth::user();
+        Log::info($admin);
         if(isset($request->decision)) {
             $response = new CustomResponse();
             $response->success = true;
