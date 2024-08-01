@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
     });
     Route::prefix('/redeem')->group(function() {
         Route::get('/unpaid',[AdminController::class, 'getUnpaidRedeem']);
-        // Route::get('/paid',[AdminController::class, 'getPaidRedeem']);
+        // Route::get('/paid',[AdminController::class, 'getRedeemHistories']);
     });
 });
 
