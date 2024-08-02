@@ -6,6 +6,7 @@ use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserDetailController;
+use App\Http\Controllers\UtilsController;
 use App\Http\Resources\LoginResource;
 use App\Http\Utilities\CustomResponse;
 use Illuminate\Http\Request;
@@ -82,6 +83,7 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);
 Route::get('/study-programs',[UserDetailController::class, 'getStudyPrograms']);
 Route::get('/banks',[UserDetailController::class, 'getBanks']);
+Route::get('/faqs',[UtilsController::class, 'getFaqs']);
 
 Route::get('/notes',[NotesController::class, 'getNotePreviews']);
 Route::get('/note-details',[NotesController::class,'getSingleNote']);
