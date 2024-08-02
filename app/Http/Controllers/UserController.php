@@ -16,6 +16,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -131,32 +132,57 @@ class UserController extends Controller
     public function editProfile(UserEditProfileRequest $request)
     {
         $data = $request->validated();
-        $user = Auth::user();
-        $user->fill($data);
-        if(!empty($request->password)) {
-            $user->password = Hash::make($request->password);
-        }
-        if(!empty($request->file('ktp_image'))) {
-            $ktp_image = $request->file('ktp_image');
-            $file_name = uniqid() . '.' . $ktp_image->extension();
-            $ktp_image->storeAs('ktp_images',$file_name);
-            $user->ktp_image = $file_name;
-        }
-        $result = $user->save();
-        if($result) {
-            $response = new CustomResponse();
-            $response->success = $result;
-            $response->message = $result ? 'Profil Berhasil diperbarui' : 'Profil Gagal diperbarui';
 
-            return (new GeneralRescource($response))->response()->setStatusCode(201);
-        }
-        throw new HttpResponseException(response([
-            'errors' => [
-                'error' => [
-                    'Internal Server Error'
+        try {
+            // DB::beginTransaction();
+            $user = Auth::user();
+
+            $user->first_name = $data['first_name'];
+            $user->last_name = $data['last_name'];
+            $user->email = $data['email'];
+            $user->starting_year = $data['starting_year'];
+            $user->university_id = $data['university_id'];
+            $user->study_program_id = $data['study_program_id'];
+            
+            if(!empty($request->bank_id)) {
+                $user->bank_id = $request->bank_id;
+            }
+            if(!empty($request->account_number)) {
+                $user->account_number = $request->account_number;
+            }
+
+            if(!empty($request->password)) {
+                $user->password = Hash::make($request->password);
+            }
+            if(!empty($request->file('ktp_image'))) {
+                $ktp_image = $request->file('ktp_image');
+                $file_name = uniqid() . '.' . $ktp_image->extension();
+                $ktp_image->storeAs('ktp_images',$file_name);
+                $user->ktp_image = $file_name;
+            }
+
+            $user->save();
+
+            $get_user = User::select('users.*','universities.id as university_id', 'universities.name as university_name','study_programs.id as study_program_id', 'study_programs.name as study_program_name', 'banks.id as bank_id', 'banks.name as bank_name')
+            ->join('universities','universities.id','users.university_id')
+            ->join('study_programs','study_programs.id','users.study_program_id')
+            ->leftJoin('banks','banks.id','users.bank_id')
+            ->where('users.id',$user->id)
+            ->first();
+
+            // DB::commit();
+
+            return (new UserResource($get_user))->response()->setStatusCode(201);
+        } catch (\PDOException $error) {
+            // DB::rollBack();
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'Internal Server Error'
+                    ]
                 ]
-            ]
-        ],500)); 
+            ],500)); 
+        }
     }
     public function loadKTP($name)
     {

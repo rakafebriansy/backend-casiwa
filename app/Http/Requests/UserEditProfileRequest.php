@@ -33,9 +33,9 @@ class UserEditProfileRequest extends FormRequest
             'starting_year' => 'required|string|size:4',
             'university_id' => 'required|numeric',
             'study_program_id' => 'required|numeric',
-            'bank_id' => 'required|numeric',
-            'account_number' => 'required|numeric',
-            'ktp_image' => 'required|mimes:png,jpg|max:1024',
+            'bank_id' => 'nullable|numeric',
+            'account_number' => 'nullable|numeric',
+            'ktp_image' => 'nullable|mimes:png,jpg|max:1024',
         ];
     }
     public function messages()
@@ -46,9 +46,6 @@ class UserEditProfileRequest extends FormRequest
             'starting_year.required' => 'Tahun Masuk Perkuliahan tidak boleh kosong',
             'university_id.required' => 'Universitas belum dipilih',
             'study_program_id.required' => 'Program Studi belum dipilih',
-            'ktp_image.required' => 'Foto KTP tidak boleh kosong',
-            'bank_id.required' => 'Bank belum dipilih',
-            'account_number.required' => 'Nomor Rekening tidak boleh kosong',
             'first_name.max' => 'Nama Depan harus berjumlah maksimal 60 karakter',
             'last_name.max' => 'Nama Belakang harus berjumlah maksimal 60 karakter',
             'email.email' => 'Alamat Email tidak valid',
