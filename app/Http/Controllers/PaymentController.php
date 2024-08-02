@@ -6,6 +6,7 @@ use App\Http\Resources\GeneralRescource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Order;
 use App\Models\RedeemHistory;
+use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -132,7 +133,7 @@ class PaymentController extends Controller
         throw new HttpResponseException(response([
             'errors' => [
                 'error' => [
-                    $request->id
+                    'Internal Server Error'
                 ]
             ]
         ],500));    
@@ -186,7 +187,25 @@ class PaymentController extends Controller
                 ]
             ],500));
         }
+    }
+    public function freeDownload()
+    {
+        $user = User::find(Auth::user()->id);
+        $user->free_download = $user->free_download--;
+        $result = $user->save();
+        if($result) {
+            $response = new CustomResponse();
+            $response->success = true;
+            $response->message = 'Free Download Points Has Been Used';
 
-
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        }
+        throw new HttpResponseException(response([
+            'errors' => [
+                'error' => [
+                    'Internal Server Error'
+                ]
+            ]
+        ],500));    
     }
 }

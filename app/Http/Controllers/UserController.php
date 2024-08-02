@@ -82,15 +82,15 @@ class UserController extends Controller
     }
     public function isBought(Request $request): JsonResponse
     {
-        $user_id = Auth::user()->id;
+        $user = Auth::user();
         if(isset($request->id)) {
-            $exists = Order::where('note_id',$request->id)->where('user_id',$user_id)->where('status','paid')->exists();
+            $exists = Order::where('note_id',$request->id)->where('user_id',$user->id)->where('status','paid')->exists();
             if($exists) {
                 $response = new CustomResponse();
                 $response->success = true;
                 $response->data = [
                     'login' => true,
-                    'bought' => true
+                    'bought' => true,
                 ];
                 $response->message = 'Allowed';
                 return (new GeneralRescource($response))->response()->setStatusCode(200);
@@ -100,7 +100,8 @@ class UserController extends Controller
         $response->success = true;
         $response->data = [
             'login' => true,
-            'bought' => false
+            'bought' => false,
+            'free_download' => $user->free_download
         ];
         $response->message = 'Unallowed';
         return (new GeneralRescource($response))->response()->setStatusCode(200);
