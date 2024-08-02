@@ -188,24 +188,36 @@ class PaymentController extends Controller
             ],500));
         }
     }
-    public function freeDownload()
+    public function freeDownload(Request $request)
     {
-        $user = User::find(Auth::user()->id);
-        $user->free_download = $user->free_download--;
-        $result = $user->save();
-        if($result) {
+        try {
+            DB::beginTransaction();
+            $user = User::find(Auth::user()->id);
+            $user->free_download = $user->free_download--;
+            $user->save();
+
+            $order = new Order();
+            $order->id = uniqid();
+            $order->user_id = $user->id;
+            $order->note_id = $request->id;
+            $order->status = 'paid';
+            $order->save();
+            DB::commit();
+
             $response = new CustomResponse();
             $response->success = true;
             $response->message = 'Free Download Points Has Been Used';
 
             return (new GeneralRescource($response))->response()->setStatusCode(200);
-        }
-        throw new HttpResponseException(response([
-            'errors' => [
-                'error' => [
-                    'Internal Server Error'
+        } catch (\PDOException $e) {
+            DB::rollBack();
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'Internal Server Error'
+                    ]
                 ]
-            ]
-        ],500));    
+            ],500));    
+        }
     }
 }
