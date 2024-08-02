@@ -193,7 +193,8 @@ class PaymentController extends Controller
         try {
             DB::beginTransaction();
             $user = User::find(Auth::user()->id);
-            $user->free_download = $user->free_download--;
+            Log::info(json_encode($user));
+            $user->free_download = $user->free_download - 1;
             $user->save();
 
             $order = new Order();
