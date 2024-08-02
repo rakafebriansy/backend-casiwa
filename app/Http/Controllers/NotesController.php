@@ -124,7 +124,7 @@ class NotesController extends Controller
                 $notesQuery->where('study_programs.id', $request->study_program_id);
             }
 
-            if ($request->has('keyword')) {
+            if (!empty($request->keyword)) {
                 $notesQuery->whereRaw("LOWER(notes.title) LIKE ?", ['%' . strtolower($request->keyword) . '%']);
             }
 
@@ -166,7 +166,7 @@ class NotesController extends Controller
             ->leftJoin('orders', 'notes.id', '=', 'orders.note_id')
             ->where('notes.user_id', $user_id);
 
-            if ($request->has('keyword')) {
+            if (!empty($request->keyword)) {
                 $notesQuery->whereRaw("LOWER(notes.title) LIKE ?", ['%' . strtolower($request->keyword) . '%']);
             }
 
@@ -203,7 +203,7 @@ class NotesController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            
+
             $notesQuery = Note::select(
                 'notes.id',
                 'notes.title',
@@ -219,6 +219,7 @@ class NotesController extends Controller
             ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
             ->join('universities', 'universities.id', '=', 'users.university_id')
             ->join('orders', 'notes.id', '=', 'orders.note_id')
+            ->leftJoin('orders', 'notes.id', '=', 'orders.note_id')
             ->where('orders.user_id', $user_id)
             ->where('orders.status', 'paid')
             ->groupBy(
@@ -230,10 +231,21 @@ class NotesController extends Controller
                 'users.last_name',
                 'study_programs.name',
                 'universities.name'
-            )
-            ->orderBy('notes.title');
+            );
+
+            if (!empty($request->university_id)) {
+                $notesQuery->where('universities.id', $request->university_id);
+            }
+
+            if (!empty($request->study_program_id)) {
+                $notesQuery->where('study_programs.id', $request->study_program_id);
+            }
+
+            if (!empty($request->keyword)) {
+                $notesQuery->whereRaw("LOWER(notes.title) LIKE ?", ['%' . strtolower($request->keyword) . '%']);
+            }
             
-            $notes = $notesQuery->get();
+            $notes = $notesQuery->orderBy('notes.title')->get();
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
 
