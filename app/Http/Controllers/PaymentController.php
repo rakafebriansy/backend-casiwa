@@ -143,8 +143,8 @@ class PaymentController extends Controller
         $user = Auth::user();
         $total = $request->total;
         try {
-            $allowed = RedeemHistory::where('user_id',$user->id)->where('status','on-process')->exists();
-            if(!$allowed) {
+            $on_process = RedeemHistory::where('user_id',$user->id)->where('status','on-process')->exists();
+            if($on_process) {
                 throw new HttpResponseException(response([
                     'errors' => [
                         'error' => [
@@ -155,28 +155,20 @@ class PaymentController extends Controller
             }
             DB::beginTransaction();
             $user->balance -= $total;
-            $result = $user->save();
+            $user->save();
     
-            if($result) {
-                $redeem_history = new RedeemHistory();
-                $redeem_history->total = $total;
-                $redeem_history->user_id = $user->id;
-                $result_2 = $redeem_history->save();
-                if($result_2) {
-                    $response = new CustomResponse();
-                    $response->success = true;
-                    $response->message = 'Berhasil melakukan redeem, tunggu proses berikutnya';
-        
-                    return (new GeneralRescource($response))->response()->setStatusCode(200);
-                }
-            }
-            throw new HttpResponseException(response([
-                'errors' => [
-                    'error' => [
-                        'Internal Server Error'
-                    ]
-                ]
-            ],500));
+            $redeem_history = new RedeemHistory();
+            $redeem_history->total = $total;
+            $redeem_history->user_id = $user->id;
+            $redeem_history->save();
+
+            $response = new CustomResponse();
+            $response->success = true;
+            $response->message = 'Berhasil melakukan redeem, tunggu proses berikutnya';
+
+            DB::commit();
+
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
         } catch (\PDOException $e) {
             DB::rollback();
             throw new HttpResponseException(response([

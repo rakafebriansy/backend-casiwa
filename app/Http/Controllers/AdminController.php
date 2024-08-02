@@ -10,6 +10,7 @@ use App\Http\Resources\UnpaidRedeemResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Admin;
 use App\Models\RedeemHistory;
+use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -64,14 +65,27 @@ class AdminController extends Controller
                     'status' => 'accepted',
                     'admin_id' => $admin->id
                 ]);
+
                 $response->message = "Berhasil menerima permintaan";
             } else {
-                RedeemHistory::where('id',$request->id)->update([
-                    'status' => 'denied',
-                    'admin_id' => $admin->id
-                ]);
+                $redeem_history = RedeemHistory::where('id',$request->id)->first();
+                $redeem_history->status = 'denied';
+                $redeem_history->admin_id = $admin->id;
+                $redeem_history->save();
+
+                $user = User::find($redeem_history->user_id);
+                $user->balance = $user->balance + $redeem_history->total;
+                $user->save();
+
                 $response->message = "Berhasil menolak permintaan";
             }
+
+            $redeem_histories = RedeemHistory::select('redeem_histories.id','redeem_histories.updated_at as datetime','redeem_histories.total','redeem_histories.status')
+            ->selectRaw('CONCAT(users.first_name, " ", users.last_name) as name')
+            ->join('users','users.id','redeem_histories.user_id')
+            ->where('redeem_histories.id', $request->id)->first();
+            $response->data = $redeem_histories;
+            Log::info($redeem_histories);
             return (new GeneralRescource($response))->response()->setStatusCode(200);
         }
         throw new HttpResponseException(response([
@@ -85,7 +99,8 @@ class AdminController extends Controller
     public function getRedeemHistories()
     {
         $redeem_histories = RedeemHistory::select('redeem_histories.id','redeem_histories.updated_at as datetime','redeem_histories.total','redeem_histories.status', 'users.first_name','users.last_name')
-        ->join('users','users.id','redeem_histories.user_id')->get();
+        ->join('users','users.id','redeem_histories.user_id')
+        ->where('redeem_histories.status','!=','on-process')->get();
         return (RedeemHistoryResource::collection($redeem_histories))->response()->setStatusCode(200);
     }
     public function editPassword(AdminEditPasswordRequest $request): JsonResponse
@@ -93,7 +108,7 @@ class AdminController extends Controller
         $data = $request->validated();
 
         $admin = Admin::find(Auth::user()->id);
-        $admin->password = Hash::make($request->password);
+        $admin->password = Hash::make($data['password']);
         $result = $admin->save();
         if ($result) {
             $response = new CustomResponse();
