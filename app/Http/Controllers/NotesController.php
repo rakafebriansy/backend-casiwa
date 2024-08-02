@@ -45,7 +45,7 @@ class NotesController extends Controller
                 'notes.id',
                 'notes.title',
                 'notes.thumbnail_name',
-                'notes.created_at',
+                'notes.created_at as date',
                 'users.first_name',
                 'users.last_name',
                 'study_programs.name as study_program',
@@ -71,6 +71,7 @@ class NotesController extends Controller
             $response = new CustomResponse();
             $response->success = $result;
             $response->message = $result ? 'Dokumen berhasil diunggah. Silahkan refresh!' : 'Dokumen Gagal Diunggah';
+            $new_note['date'] = date('d-m-Y',strtotime($new_note['date']));
             $response->data = $new_note;
 
             DB::commit();

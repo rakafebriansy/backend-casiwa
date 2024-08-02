@@ -134,7 +134,7 @@ class UserController extends Controller
         $data = $request->validated();
 
         try {
-            // DB::beginTransaction();
+            DB::beginTransaction();
             $user = Auth::user();
 
             $user->first_name = $data['first_name'];
@@ -170,11 +170,11 @@ class UserController extends Controller
             ->where('users.id',$user->id)
             ->first();
 
-            // DB::commit();
+            DB::commit();
 
             return (new UserResource($get_user))->response()->setStatusCode(201);
         } catch (\PDOException $error) {
-            // DB::rollBack();
+            DB::rollBack();
             throw new HttpResponseException(response([
                 'errors' => [
                     'error' => [
