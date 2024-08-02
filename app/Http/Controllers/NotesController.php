@@ -116,11 +116,11 @@ class NotesController extends Controller
                 'universities.name'
             );
 
-            if ($request->has('university_id')) {
+            if (!empty($request->university_id)) {
                 $notesQuery->where('universities.id', $request->university_id);
             }
 
-            if ($request->has('study_program_id')) {
+            if (!empty($request->study_program_id)) {
                 $notesQuery->where('study_programs.id', $request->study_program_id);
             }
 
