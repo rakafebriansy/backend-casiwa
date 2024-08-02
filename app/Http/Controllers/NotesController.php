@@ -12,6 +12,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,39 +21,71 @@ class NotesController extends Controller
     public function upload(UploadNoteRequest $request): JsonResponse
     {
         $data = $request->validated();
+        try {
+            DB::beginTransaction();
+            $pdf_doc = $request->file('file');
+            $thumbnail = $request->file('thumbnail');
+            $name = uniqid(mt_rand(),true);
+            $file_name = $name . '.' . $pdf_doc->extension();
+            $thumbnail_name = $name . '.' . $thumbnail->extension();
+    
+            $pdf_doc->storeAs('pdfs',$file_name);
+            $thumbnail->storeAs('thumbnails',$thumbnail_name);
+    
+            $note = new Note($data);
+            $note->title = $data['title'];
+            $note->description = $data['description'];
+            $note->file_name = $file_name;
+            $note->thumbnail_name = $thumbnail_name;
+            $note->price = 2500; //hardcoded
+            $note->user_id = Auth::user()->id;
+            $result = $note->save();
+    
+            $new_note = Note::select(
+                'notes.id',
+                'notes.title',
+                'notes.thumbnail_name',
+                'notes.created_at',
+                'users.first_name',
+                'users.last_name',
+                'study_programs.name as study_program',
+                'universities.name as university'
+            )
+            ->selectRaw('COUNT(orders.id) AS download_count')
+            ->join('users', 'users.id', '=', 'notes.user_id')
+            ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
+            ->join('universities', 'universities.id', '=', 'users.university_id')
+            ->leftJoin('orders', 'notes.id', '=', 'orders.note_id')
+            ->where('notes.id',$note->id)
+            ->groupBy(
+                'notes.id',
+                'notes.title',
+                'notes.thumbnail_name',
+                'notes.created_at',
+                'users.first_name',
+                'users.last_name',
+                'study_programs.name',
+                'universities.name'
+            )->first()->toArray();
 
-        $pdf_doc = $request->file('file');
-        $thumbnail = $request->file('thumbnail');
-        $name = uniqid(mt_rand(),true);
-        $file_name = $name . '.' . $pdf_doc->extension();
-        $thumbnail_name = $name . '.' . $thumbnail->extension();
-
-        $pdf_doc->storeAs('pdfs',$file_name);
-        $thumbnail->storeAs('thumbnails',$thumbnail_name);
-
-        $note = new Note($data);
-        $note->title = $data['title'];
-        $note->description = $data['description'];
-        $note->file_name = $file_name;
-        $note->thumbnail_name = $thumbnail_name;
-        $note->price = 2500; //hardcoded
-        $note->user_id = Auth::user()->id;
-        $result = $note->save();
-
-        if($result) {
             $response = new CustomResponse();
             $response->success = $result;
             $response->message = $result ? 'Dokumen berhasil diunggah. Silahkan refresh!' : 'Dokumen Gagal Diunggah';
+            $response->data = $new_note;
+
+            DB::commit();
 
             return (new GeneralRescource($response))->response()->setStatusCode(201);
-        }
-        throw new HttpResponseException(response([
-            'errors' => [
-                'error' => [
-                    'Internal Server Error'
+        } catch (\PDOException $error) {
+            DB::rollBack();
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        $error
+                    ]
                 ]
-            ]
-        ],500)); 
+            ],500)); 
+        }
     }
     public function getNotePreviews(Request $request): JsonResponse
     {
