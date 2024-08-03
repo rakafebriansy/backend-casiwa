@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->prefix('/user')->group(function() {
     Route::post('/free-download',[PaymentController::class, 'freeDownload']);
     Route::get('/edit-note',[NotesController::class, 'getEditedNote']);
     Route::post('/edit-note',[NotesController::class, 'editNote']);
+    Route::post('/delete-note',[NotesController::class, 'deleteNote']);
     
     Route::get('/test', function() {
         return Auth::user()->id;

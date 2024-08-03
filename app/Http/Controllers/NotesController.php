@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -420,8 +421,35 @@ class NotesController extends Controller
             ],500)); 
         }
     }
+
+    public function deleteNote(Request $request): JsonResponse
+    {
+        $note = Note::find($request->id);
+        if($note) {
+            $orders = $note->orders;
+            if(count($orders)) {
+                throw new HttpResponseException(response([
+                    'errors' => [
+                        'error' => [
+                            'Catatan gagal dihapus. Catatan sudah pernah diunduh'
+                        ]
+                    ]
+                ],400)); 
+            }
+            $result = $note->delete();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Catatan berhasil dihapus' : 'Catatan gagal dihapus';
+
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        }
+        throw new HttpResponseException(response([
+            'errors' => [
+                'error' => [
+                    'Internal Server Error'
+                ]
+            ]
+        ],500)); 
+    }
 }
-// 'title' => 'required|max:60',
-// 'description' => 'required|max:200',
-// 'file' => 'mimes:pdf|nullable|max:20480',
-// 'thumbnail' => 'nullable|mimes:png,jpg',
