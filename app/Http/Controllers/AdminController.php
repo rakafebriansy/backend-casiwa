@@ -9,6 +9,7 @@ use App\Http\Resources\RedeemHistoryResource;
 use App\Http\Resources\UnpaidRedeemResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Admin;
+use App\Models\Note;
 use App\Models\RedeemHistory;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -124,5 +125,26 @@ class AdminController extends Controller
                 ]
             ]
         ],500));
+    }
+
+    public function deleteNote(Request $request): JsonResponse
+    {
+        $note = Note::find($request->id);
+        if($note) {
+            $result = $note->delete();
+
+            $response = new CustomResponse();
+            $response->success = $result;
+            $response->message = $result ? 'Catatan berhasil dihapus' : 'Catatan gagal dihapus';
+
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        }
+        throw new HttpResponseException(response([
+            'errors' => [
+                'error' => [
+                    'Internal Server Error'
+                ]
+            ]
+        ],500)); 
     }
 }

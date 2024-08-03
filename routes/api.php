@@ -82,6 +82,7 @@ Route::middleware('auth:sanctum')->prefix('/admin')->group(function() {
         Route::get('/history',[AdminController::class, 'getRedeemHistories']);
     });
     Route::post('/edit-password',[AdminController::class,'editPassword']);
+    Route::post('/delete-note',[AdminController::class,'deleteNote']);
 });
 
 Route::get('/universities',[UserDetailController::class, 'getUniversities']);
