@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UploadNoteRequest;
+use App\Http\Resources\EditedNoteResource;
 use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\NotePreviewResource;
 use App\Http\Resources\NoteResource;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class NotesController extends Controller
 {
@@ -298,13 +300,13 @@ class NotesController extends Controller
             throw new HttpResponseException(response([
                 'errors' => [
                     'data' => [
-                        $e
+                        'Internal Server Error'
                     ]
                 ]
             ],500));
         }
     }
-    public function loadImagePreview($name)
+    public function loadImagePreview($name): BinaryFileResponse
     {
         $path = storage_path("app/thumbnails/$name"); ;
         if (Storage::disk('local')->exists("thumbnails/$name")) {
@@ -313,7 +315,7 @@ class NotesController extends Controller
             abort(404);
         }
     }
-    public function loadDocument($name)
+    public function loadDocument($name): BinaryFileResponse
     {
         $path = Storage::disk('local')->path("pdfs/$name");
     
@@ -323,7 +325,7 @@ class NotesController extends Controller
             abort(404);
         }
     }
-    public function download($name)
+    public function download($name): BinaryFileResponse
     {
         $user = Auth::user();
         if($user) {
@@ -331,5 +333,17 @@ class NotesController extends Controller
             $headers = ['Content-Type: application/pdf'];
             return Response::download($path, 'test.pdf', $headers);
         }
+        throw new HttpResponseException(response([
+            'errors' => [
+                'data' => [
+                    'Internal Server Error'
+                ]
+            ]
+        ],500));
+    }
+    public function getEditedNote(Request $request)
+    {
+        $note = Note::find($request->id);
+        return (new EditedNoteResource($note))->response()->setStatusCode(200);
     }
 }
