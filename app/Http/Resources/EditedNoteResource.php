@@ -16,6 +16,7 @@ class EditedNoteResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'price' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
         ];

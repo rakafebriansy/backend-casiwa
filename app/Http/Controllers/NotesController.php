@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditNoteRequest;
 use App\Http\Requests\UploadNoteRequest;
 use App\Http\Resources\EditedNoteResource;
 use App\Http\Resources\GeneralRescource;
@@ -341,9 +342,86 @@ class NotesController extends Controller
             ]
         ],500));
     }
-    public function getEditedNote(Request $request)
+    public function getEditedNote(Request $request): JsonResponse
     {
         $note = Note::find($request->id);
         return (new EditedNoteResource($note))->response()->setStatusCode(200);
     }
+    public function editNote(EditNoteRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        try {
+            DB::beginTransaction();
+
+            $note = Note::find($data['id']);
+            $note->title = $data['title'];
+            $note->description = $data['description'];
+
+            if(!empty($request->file('file')) && !empty($request)) {
+                $pdf_doc = $request->file('file');
+                $thumbnail = $request->file('thumbnail');
+                $name = uniqid(mt_rand(),true);
+                $file_name = $name . '.' . $pdf_doc->extension();
+                $thumbnail_name = $name . '.' . $thumbnail->extension();
+        
+                $pdf_doc->storeAs('pdfs',$file_name);
+                $thumbnail->storeAs('thumbnails',$thumbnail_name);
+                $note->file_name = $file_name;
+                $note->thumbnail_name = $thumbnail_name;
+            }
+
+            $note->save();
+
+            $notes = Note::select(
+                'notes.id',
+                'notes.title',
+                'notes.thumbnail_name',
+                'notes.created_at',
+                'users.first_name',
+                'users.last_name',
+                'study_programs.name as study_program',
+                'universities.name as university'
+            )
+            ->selectRaw('COUNT(orders.id) AS download_count')
+            ->join('users', 'users.id', '=', 'notes.user_id')
+            ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
+            ->join('universities', 'universities.id', '=', 'users.university_id')
+            ->leftJoin('orders', 'notes.id', '=', 'orders.note_id')
+            ->where('notes.user_id', $note->user_id)
+            ->groupBy(
+                'notes.id',
+                'notes.title',
+                'notes.thumbnail_name',
+                'notes.created_at',
+                'users.first_name',
+                'users.last_name',
+                'study_programs.name',
+                'universities.name'
+            )->get();
+            
+            $notes_wrapped = NotePreviewResource::collection($notes);
+            $total_notes = $notes_wrapped->count();
+            
+            DB::commit();
+
+            return response()->json([
+                'data' => $notes_wrapped,
+                'total' => $total_notes
+            ], 200);
+        } catch (\PDOException $error) {
+            DB::rollBack();
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        $error
+                    ]
+                ]
+            ],500)); 
+        }
+    }
 }
+// 'title' => 'required|max:60',
+// 'description' => 'required|max:200',
+// 'file' => 'mimes:pdf|nullable|max:20480',
+// 'thumbnail' => 'nullable|mimes:png,jpg',
