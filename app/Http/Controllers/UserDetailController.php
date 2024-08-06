@@ -147,7 +147,7 @@ class UserDetailController extends Controller
             $response = new CustomResponse();
             $response->success = $result;
             $response->message = $result ? 'Data program studi berhasil diperbarui' : 'Data program studi gagal diperbarui';
-            $response->data = Bank::all()->toArray();
+            $response->data = StudyProgram::all()->toArray();
             return (new GeneralRescource($response))->response()->setStatusCode(201);
         } catch (\PDOException $e) {
             throw new HttpResponseException(response([
