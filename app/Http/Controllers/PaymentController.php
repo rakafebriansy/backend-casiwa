@@ -185,7 +185,6 @@ class PaymentController extends Controller
         try {
             DB::beginTransaction();
             $user = User::find(Auth::user()->id);
-            Log::info(json_encode($user));
             $user->free_download = $user->free_download - 1;
             $user->save();
 
@@ -196,8 +195,10 @@ class PaymentController extends Controller
             $order->status = 'paid';
             $order->save();
 
-            $user = $order->note->user;
-            $user->balance += intval($request->gross_amount);
+            $note = $order->note;
+
+            $user = $note->user;
+            $user->balance += intval($note->price);
             $user->save();
 
             DB::commit();
