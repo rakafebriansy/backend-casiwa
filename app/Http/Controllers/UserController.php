@@ -230,7 +230,7 @@ class UserController extends Controller
 
             $reset_link = 'https://casiwa.my.id/reset?token=' . $token;
 
-            Mail::to($request->user())->send(new ForgotPasswordMail($user, $reset_link));
+            Mail::to($request->email)->send(new ForgotPasswordMail($user, $reset_link));
 
             $response = new CustomResponse();
             $response->success = true;
