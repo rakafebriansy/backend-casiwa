@@ -202,7 +202,7 @@ class UserController extends Controller
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         try {
-            $user = User::where('email',$request->email);
+            $user = User::where('email',$request->email)->first();
 
             $token = uniqid('casiwa_',true);
 
