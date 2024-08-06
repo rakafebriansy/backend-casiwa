@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EditProfileRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\UserEditProfileRequest;
+use App\Http\Requests\UserForgotPasswordRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\UserResetPasswordRequest;
 use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\LoginResource;
 use App\Http\Resources\UserResource;
@@ -200,15 +202,16 @@ class UserController extends Controller
         }
     }
 
-    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    public function forgotPassword(UserForgotPasswordRequest $request): JsonResponse
     {
+        $data = $request->validated();
         try {
             DB::beginTransaction();
 
             $now = Carbon::now();
             $formatted_now = $now->format('Y-m-d H:i:s');
 
-            $isNotAllowed = DB::table('password_reset_tokens')->where('email',$request->email)->where('expired_at','>=',$formatted_now)->exists();
+            $isNotAllowed = DB::table('password_reset_tokens')->where('email',$data['email'])->where('expired_at','>=',$formatted_now)->exists();
             
             if($isNotAllowed) {
                 throw new HttpResponseException(response([
@@ -220,7 +223,7 @@ class UserController extends Controller
                 ],400)); 
             }
 
-            $user = User::where('email',$request->email)->first();
+            $user = User::where('email',$data['email'])->first();
             
 
             $token = uniqid('casiwa_',true);
@@ -232,7 +235,7 @@ class UserController extends Controller
 
             $reset_link = 'https://casiwa.my.id/reset?token=' . $token;
 
-            Mail::to($request->email)->send(new ForgotPasswordMail($user, $reset_link));
+            Mail::to($data['email'])->send(new ForgotPasswordMail($user, $reset_link));
 
             $response = new CustomResponse();
             $response->success = true;
@@ -251,5 +254,75 @@ class UserController extends Controller
                 ]
             ],500)); 
         }
+    }
+    public function getReset(Request $request): JsonResponse
+    {
+        try {
+            if(!isset($request->token)) {
+                throw new HttpResponseException(response([
+                    'errors' => [
+                        'error' => [
+                            'Token tidak tersedia'
+                        ]
+                    ]
+                ],400)); 
+            }
+    
+            $exists = DB::table('password_reset_tokens')->where('token',$request->token)->exists();
+            if($exists) {
+                $response = new CustomResponse();
+                $response->success = true;
+                $response->message = 'Token terkonfirmasi';
+                return (new GeneralRescource($response))->response()->setStatusCode(200);
+            }
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'Token telah kadaluarsa'
+                    ]
+                ]
+            ],400)); 
+        } catch (\PDOException $error) {
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'Internal Server Error'
+                    ]
+                ]
+            ],500)); 
+        }
+    }
+
+    public function resetPassword(UserResetPasswordRequest $request): JsonResponse
+    {
+        try {
+            DB::beginTransaction();
+            $data = $request->validated();
+            
+            $password_reset_token = DB::table('password_reset_tokens')->where('token',$data['token'])->first();
+            
+            $user = User::where('email',$password_reset_token->email)->first();
+            $user->password = Hash::make($data['password']);
+            $user->save();
+
+            DB::table('password_reset_tokens')->where('token',$data['token'])->delete();
+            
+            $response = new CustomResponse();
+            $response->success = true;
+            $response->message = 'Kata sandi berhasil di-reset';
+
+            DB::commit();
+            return (new GeneralRescource($response))->response()->setStatusCode(201);
+        } catch (\PDOException $error) {
+            DB::rollBack();
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        $error
+                    ]
+                ]
+            ],500)); 
+        }
+
     }
 }

@@ -100,3 +100,5 @@ Route::get('/document/{name}',[NotesController::class, 'loadDocument']);
 Route::get('/ktp/{name}',[UserController::class,'loadKTP']);
 Route::post('/payment',[PaymentController::class,'doPayment']);
 Route::post('/forgot-password',[UserController::class,'forgotPassword']);
+Route::get('/reset',[UserController::class,'getReset']);
+Route::post('/reset-password',[UserController::class,'resetPassword']);
