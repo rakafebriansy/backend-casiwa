@@ -195,6 +195,11 @@ class PaymentController extends Controller
             $order->note_id = $request->id;
             $order->status = 'paid';
             $order->save();
+
+            $user = $order->note->user;
+            $user->balance += intval($request->gross_amount);
+            $user->save();
+
             DB::commit();
 
             $response = new CustomResponse();

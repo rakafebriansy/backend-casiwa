@@ -223,7 +223,6 @@ class NotesController extends Controller
             ->join('users', 'users.id', '=', 'notes.user_id')
             ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
             ->join('universities', 'universities.id', '=', 'users.university_id')
-            ->join('orders', 'notes.id', '=', 'orders.note_id')
             ->leftJoin('orders', 'notes.id', '=', 'orders.note_id')
             ->where('orders.user_id', $user_id)
             ->where('orders.status', 'paid')
