@@ -203,6 +203,8 @@ class UserController extends Controller
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         try {
+            DB::beginTransaction();
+
             $now = Carbon::now();
             $formatted_now = $now->format('Y-m-d H:i:s');
 
@@ -235,6 +237,9 @@ class UserController extends Controller
             $response = new CustomResponse();
             $response->success = true;
             $response->message = 'Email terkirim';
+
+            DB::commit();
+            
             return (new GeneralRescource($response))->response()->setStatusCode(200);
         } catch (\PDOException $error) {
             DB::rollBack();
