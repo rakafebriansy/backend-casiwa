@@ -14,6 +14,7 @@ use App\Http\Utilities\CustomResponse;
 use App\Mail\ForgotPasswordMail;
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -202,7 +203,23 @@ class UserController extends Controller
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         try {
+            $now = Carbon::now();
+            $formatted_now = $now->format('Y-m-d H:i:s');
+
+            $isNotAllowed = DB::table('password_reset_tokens')->where('email',$request->email)->where('expired_at','>=',$formatted_now)->exists();
+            
+            if($isNotAllowed) {
+                throw new HttpResponseException(response([
+                    'errors' => [
+                        'error' => [
+                            'Email sebelumnya sudah terkirim. Mohon cek kotak masuk anda'
+                        ]
+                    ]
+                ],400)); 
+            }
+
             $user = User::where('email',$request->email)->first();
+            
 
             $token = uniqid('casiwa_',true);
 
