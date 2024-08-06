@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserDetailDeleteRequest;
+use App\Http\Requests\UserDetailEditRequest;
 use App\Http\Requests\UserDetailRequest;
+use App\Http\Requests\UserDetailStoreRequest;
 use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\RedeemHistoryResource;
 use App\Http\Resources\UserDetailResource;
 use App\Http\Utilities\CustomResponse;
 use App\Models\Bank;
-use App\Models\Order;
 use App\Models\RedeemHistory;
 use App\Models\StudyProgram;
 use App\Models\University;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class UserDetailController extends Controller
 {
@@ -35,7 +35,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function storeUniversities(UserDetailRequest $request): JsonResponse
+    public function storeUniversities(UserDetailStoreRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -56,7 +56,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function editUniversities(UserDetailRequest $request): JsonResponse
+    public function editUniversities(UserDetailEditRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -79,7 +79,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function deleteUniversities(UserDetailRequest $request): JsonResponse
+    public function deleteUniversities(UserDetailDeleteRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -115,7 +115,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function storeStudyPrograms(UserDetailRequest $request): JsonResponse
+    public function storeStudyPrograms(UserDetailStoreRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -136,7 +136,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function editStudyPrograms(UserDetailRequest $request): JsonResponse
+    public function editStudyPrograms(UserDetailEditRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -159,7 +159,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function deleteStudyPrograms(UserDetailRequest $request): JsonResponse
+    public function deleteStudyPrograms(UserDetailDeleteRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -195,7 +195,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function storeBanks(UserDetailRequest $request): JsonResponse
+    public function storeBanks(UserDetailStoreRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -216,7 +216,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function editBanks(UserDetailRequest $request): JsonResponse
+    public function editBanks(UserDetailEditRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -239,7 +239,7 @@ class UserDetailController extends Controller
             ],500));
         }
     }
-    public function deleteBanks(UserDetailRequest $request): JsonResponse
+    public function deleteBanks(UserDetailDeleteRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
