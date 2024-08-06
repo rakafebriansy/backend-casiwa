@@ -99,3 +99,4 @@ Route::get('/preview/{name}',[NotesController::class, 'loadImagePreview']);
 Route::get('/document/{name}',[NotesController::class, 'loadDocument']);
 Route::get('/ktp/{name}',[UserController::class,'loadKTP']);
 Route::post('/payment',[PaymentController::class,'doPayment']);
+Route::post('/forgot-password',[UserController::class,'forgotPassword']);

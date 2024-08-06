@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EditProfileRequest;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\UserEditProfileRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
@@ -10,6 +11,7 @@ use App\Http\Resources\GeneralRescource;
 use App\Http\Resources\LoginResource;
 use App\Http\Resources\UserResource;
 use App\Http\Utilities\CustomResponse;
+use App\Mail\ForgotPasswordMail;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -19,7 +21,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class UserController extends Controller
 {
@@ -129,7 +133,7 @@ class UserController extends Controller
             ],401));
         }
     }
-    public function editProfile(UserEditProfileRequest $request)
+    public function editProfile(UserEditProfileRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -184,7 +188,7 @@ class UserController extends Controller
             ],500)); 
         }
     }
-    public function loadKTP($name)
+    public function loadKTP($name): BinaryFileResponse
     {
         $path = Storage::disk('local')->path("ktp_images/$name");
     
@@ -192,6 +196,38 @@ class UserController extends Controller
             return response()->file($path);
         } else {
             abort(404);
+        }
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        try {
+            $user = User::where('email',$request->email);
+
+            $token = uniqid('casiwa_',true);
+
+            DB::table('password_reset_tokens')->insert([
+                'email' => $user->email,
+                'token' => $token,
+            ]);
+
+            $reset_link = 'https://casiwa.my.id/reset?token=' . $token;
+
+            Mail::to($request->user())->send(new ForgotPasswordMail($user, $reset_link));
+
+            $response = new CustomResponse();
+            $response->success = true;
+            $response->message = 'Email terkirim';
+            return (new GeneralRescource($response))->response()->setStatusCode(200);
+        } catch (\PDOException $error) {
+            DB::rollBack();
+            throw new HttpResponseException(response([
+                'errors' => [
+                    'error' => [
+                        'Internal Server Error'
+                    ]
+                ]
+            ],500)); 
         }
     }
 }
