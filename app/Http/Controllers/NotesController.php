@@ -239,7 +239,7 @@ class NotesController extends Controller
             })
             ->leftJoinSub($totalDownloadsSubquery, 'total_downloads', function ($join) {
                 $join->on('notes.id', '=', 'total_downloads.note_id');
-            })
+            }) //PERUBAHAN
             ->groupBy(
                 'notes.id',
                 'notes.title',
@@ -248,7 +248,8 @@ class NotesController extends Controller
                 'users.first_name',
                 'users.last_name',
                 'study_programs.name',
-                'universities.name'
+                'universities.name',
+                'total_downloads.total_count'
             );
 
             if (!empty($request->university_id)) {
