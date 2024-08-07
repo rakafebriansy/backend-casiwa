@@ -250,7 +250,8 @@ class NotesController extends Controller
                 'study_programs.name',
                 'universities.name',
                 'total_downloads.total_count'
-            );
+            )
+            ->havingRaw('COUNT(orders.id) > 0');
 
             if (!empty($request->university_id)) {
                 $notesQuery->where('universities.id', $request->university_id);
