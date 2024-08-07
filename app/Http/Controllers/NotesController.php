@@ -209,7 +209,6 @@ class NotesController extends Controller
         try {
             $user_id = Auth::user()->id;
 
-            // Perubahan
             $totalDownloadsSubquery = DB::table('notes')
             ->leftJoin('orders', function ($join) {
                 $join->on('notes.id', '=', 'orders.note_id')
@@ -233,7 +232,6 @@ class NotesController extends Controller
             ->join('users', 'users.id', '=', 'notes.user_id')
             ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
             ->join('universities', 'universities.id', '=', 'users.university_id')
-            ->leftJoin('orders', 'notes.id', '=', 'orders.note_id')
             ->leftJoin('orders', function ($join) use ($user_id) {
                 $join->on('notes.id', '=', 'orders.note_id')
                      ->where('orders.user_id', $user_id)
@@ -268,6 +266,9 @@ class NotesController extends Controller
             $notes = $notesQuery->orderBy('notes.title')->get();
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
+            Log::warning(json_encode($notes));
+            Log::warning(json_encode($total_notes));
+            Log::info('ok');
 
             return response()->json([
                 'data' => $notes_wrapped,
