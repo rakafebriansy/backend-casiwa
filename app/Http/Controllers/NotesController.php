@@ -250,7 +250,8 @@ class NotesController extends Controller
                 'users.last_name',
                 'study_programs.name',
                 'universities.name',
-                'total_downloads.total_count'
+                'total_downloads.total_count',
+                'orders.user_id'
             );
 
             if (!empty($request->university_id)) {
