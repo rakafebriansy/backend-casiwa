@@ -233,14 +233,14 @@ class NotesController extends Controller
             ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
             ->join('universities', 'universities.id', '=', 'users.university_id')
             //PERUBAHAN
-            ->join('orders', function ($join) use ($user_id) {
+            ->join('orders', function ($join) {
                 $join->on('notes.id', '=', 'orders.note_id')
-                     ->where('orders.user_id', $user_id)
                      ->where('orders.status', 'paid');
             })
             ->leftJoinSub($totalDownloadsSubquery, 'total_downloads', function ($join) {
                 $join->on('notes.id', '=', 'total_downloads.note_id');
             })
+            ->where('orders.user_id', $user_id)
             ->groupBy(
                 'notes.id',
                 'notes.title',
