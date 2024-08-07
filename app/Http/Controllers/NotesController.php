@@ -209,6 +209,16 @@ class NotesController extends Controller
         try {
             $user_id = Auth::user()->id;
 
+            // Perubahan
+            $totalDownloadsSubquery = DB::table('notes')
+            ->leftJoin('orders', function ($join) {
+                $join->on('notes.id', '=', 'orders.note_id')
+                    ->where('orders.status', 'paid');
+            })
+            ->select('notes.id as note_id')
+            ->selectRaw('COUNT(orders.id) AS total_count')
+            ->groupBy('notes.id');
+
             $notesQuery = Note::select(
                 'notes.id',
                 'notes.title',
@@ -217,15 +227,21 @@ class NotesController extends Controller
                 'users.first_name',
                 'users.last_name',
                 'study_programs.name as study_program',
-                'universities.name as university'
+                'universities.name as university',
+                DB::raw('COALESCE(total_downloads.total_count, 0) AS download_count')
             )
-            ->selectRaw('COUNT(orders.id) AS download_count')
             ->join('users', 'users.id', '=', 'notes.user_id')
             ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
             ->join('universities', 'universities.id', '=', 'users.university_id')
             ->leftJoin('orders', 'notes.id', '=', 'orders.note_id')
-            ->where('orders.user_id', $user_id)
-            ->where('orders.status', 'paid')
+            ->leftJoin('orders', function ($join) use ($user_id) {
+                $join->on('notes.id', '=', 'orders.note_id')
+                     ->where('orders.user_id', $user_id)
+                     ->where('orders.status', 'paid');
+            })
+            ->leftJoinSub($totalDownloadsSubquery, 'total_downloads', function ($join) {
+                $join->on('notes.id', '=', 'total_downloads.note_id');
+            })
             ->groupBy(
                 'notes.id',
                 'notes.title',
