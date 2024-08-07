@@ -232,15 +232,14 @@ class NotesController extends Controller
             ->join('users', 'users.id', '=', 'notes.user_id')
             ->join('study_programs', 'study_programs.id', '=', 'users.study_program_id')
             ->join('universities', 'universities.id', '=', 'users.university_id')
-            //PERUBAHAN
-            ->join('orders', function ($join) {
+            ->leftJoin('orders', function ($join) use ($user_id) {
                 $join->on('notes.id', '=', 'orders.note_id')
+                     ->where('orders.user_id', $user_id)
                      ->where('orders.status', 'paid');
             })
-            ->joinSub($totalDownloadsSubquery, 'total_downloads', function ($join) {
+            ->leftJoinSub($totalDownloadsSubquery, 'total_downloads', function ($join) {
                 $join->on('notes.id', '=', 'total_downloads.note_id');
             })
-            ->where('orders.user_id', $user_id)
             ->groupBy(
                 'notes.id',
                 'notes.title',
@@ -250,9 +249,9 @@ class NotesController extends Controller
                 'users.last_name',
                 'study_programs.name',
                 'universities.name',
-                'total_downloads.total_count',
-                'orders.user_id'
-            );
+                'total_downloads.total_count'
+            )
+            ->havingRaw('COUNT(orders.id) > 0');
 
             if (!empty($request->university_id)) {
                 $notesQuery->where('universities.id', $request->university_id);
