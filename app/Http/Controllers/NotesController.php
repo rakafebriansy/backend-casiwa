@@ -267,7 +267,7 @@ class NotesController extends Controller
             $notes = $notesQuery->orderBy('notes.title')->get();
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
-            Log::info(json_encode($notes,JSON_PRETTY_PRINT));
+            Log::info(json_encde($notes,JSON_PRETTY_PRINT));
 
             return response()->json([
                 'data' => $notes_wrapped,
