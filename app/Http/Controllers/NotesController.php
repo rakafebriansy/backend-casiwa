@@ -250,12 +250,12 @@ class NotesController extends Controller
                 'study_programs.name',
                 'universities.name',
                 'total_downloads.total_count'
-            )
-            ->havingRaw('COUNT(orders.id) > 0');
+            );
+
             if (!empty($request->university_id)) {
                 $notesQuery->where('universities.id', $request->university_id);
             }
-            
+
             if (!empty($request->study_program_id)) {
                 $notesQuery->where('study_programs.id', $request->study_program_id);
             }
@@ -267,7 +267,6 @@ class NotesController extends Controller
             $notes = $notesQuery->orderBy('notes.title')->get();
             $notes_wrapped = NotePreviewResource::collection($notes);
             $total_notes = $notes_wrapped->count();
-            Log::info(json_encde($notes,JSON_PRETTY_PRINT));
 
             return response()->json([
                 'data' => $notes_wrapped,
