@@ -237,7 +237,7 @@ class NotesController extends Controller
                 $join->on('notes.id', '=', 'orders.note_id')
                      ->where('orders.status', 'paid');
             })
-            ->leftJoinSub($totalDownloadsSubquery, 'total_downloads', function ($join) {
+            ->joinSub($totalDownloadsSubquery, 'total_downloads', function ($join) {
                 $join->on('notes.id', '=', 'total_downloads.note_id');
             })
             ->where('orders.user_id', $user_id)
