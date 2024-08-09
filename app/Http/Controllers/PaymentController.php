@@ -40,7 +40,7 @@ class PaymentController extends Controller
         $params = array(
             'transaction_details' => array(
                 'order_id' => $order->id,
-                'gross_amount' => $request->price ?? 2500,
+                'gross_amount' => $request->price - 1500,
             ),
             'customer_details' => array(
                 'first_name' => $user->first_name,
@@ -198,7 +198,7 @@ class PaymentController extends Controller
             $note = $order->note;
 
             $user = $note->user;
-            $user->balance += intval($note->price);
+            $user->balance += intval($note->price - 1500);
             $user->save();
 
             DB::commit();
